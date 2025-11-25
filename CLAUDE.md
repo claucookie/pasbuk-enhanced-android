@@ -181,3 +181,4 @@ From `app/build.gradle.kts`:
 
 ## Recent Changes
 - 001-passbook-journeys: Added Kotlin (latest stable, targeting JVM 11)
+- Before creating a Pull Request, use the semgrep mcp to analyse any security vulnerabilities of the changes
