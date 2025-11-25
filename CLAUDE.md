@@ -175,3 +175,9 @@ From `app/build.gradle.kts`:
 - No Room database setup yet (REQUIRED for FR-008)
 - No passbook parsing library integrated yet
 - Test directory structure exists but needs actual test implementation
+
+## Active Technologies
+- Kotlin (latest stable, targeting JVM 11) (001-passbook-journeys)
+
+## Recent Changes
+- 001-passbook-journeys: Added Kotlin (latest stable, targeting JVM 11)
