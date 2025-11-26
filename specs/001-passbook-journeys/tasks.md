@@ -23,12 +23,12 @@
 
 **Purpose**: Project initialization and dependency configuration
 
-- [ ] T001 Update `build.gradle.kts` (project level) to add KSP and Hilt plugins
-- [ ] T002 Update `app/build.gradle.kts` with Hilt, Room, Moshi, ZXing, Coil, and MockK dependencies per research.md
-- [ ] T003 [P] Create `PasbukApplication.kt` in `app/src/main/java/labs/claucookie/pasbuk/` with @HiltAndroidApp annotation
-- [ ] T004 [P] Update `AndroidManifest.xml` to reference PasbukApplication
-- [ ] T005 [P] Update `MainActivity.kt` in `app/src/main/java/labs/claucookie/pasbuk/` with @AndroidEntryPoint annotation
-- [ ] T006 Sync Gradle and verify all dependencies resolve correctly
+- [x] T001 Update `build.gradle.kts` (project level) to add KSP and Hilt plugins
+- [x] T002 Update `app/build.gradle.kts` with Hilt, Room, Moshi, ZXing, Coil, and MockK dependencies per research.md
+- [x] T003 [P] Create `PasbukApplication.kt` in `app/src/main/java/labs/claucookie/pasbuk/` with @HiltAndroidApp annotation
+- [x] T004 [P] Update `AndroidManifest.xml` to reference PasbukApplication
+- [x] T005 [P] Update `MainActivity.kt` in `app/src/main/java/labs/claucookie/pasbuk/` with @AndroidEntryPoint annotation
+- [x] T006 Sync Gradle and verify all dependencies resolve correctly
 
 ---
 
