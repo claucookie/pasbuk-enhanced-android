@@ -8,9 +8,7 @@ plugins {
 
 android {
     namespace = "labs.claucookie.pasbuk"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "labs.claucookie.pasbuk"
