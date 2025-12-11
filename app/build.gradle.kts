@@ -54,6 +54,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
+    // Navigation Compose
+    implementation(libs.navigation.compose)
+
     // Hilt - Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
