@@ -40,29 +40,29 @@
 
 ### Domain Layer Foundation
 
-- [ ] T007 [P] Create domain model enums in `app/src/main/java/labs/claucookie/pasbuk/domain/model/` (PassType.kt, BarcodeFormat.kt, TextAlignment.kt)
-- [ ] T008 [P] Create `Barcode.kt` data class in `app/src/main/java/labs/claucookie/pasbuk/domain/model/`
-- [ ] T009 [P] Create `Location.kt` data class in `app/src/main/java/labs/claucookie/pasbuk/domain/model/`
-- [ ] T010 [P] Create `PassField.kt` data class in `app/src/main/java/labs/claucookie/pasbuk/domain/model/`
-- [ ] T011 Create `Pass.kt` domain model in `app/src/main/java/labs/claucookie/pasbuk/domain/model/` (depends on T007-T010)
-- [ ] T012 [P] Create `Journey.kt` domain model in `app/src/main/java/labs/claucookie/pasbuk/domain/model/`
+- [x] T007 [P] Create domain model enums in `app/src/main/java/labs/claucookie/pasbuk/domain/model/` (PassType.kt, BarcodeFormat.kt, TextAlignment.kt)
+- [x] T008 [P] Create `Barcode.kt` data class in `app/src/main/java/labs/claucookie/pasbuk/domain/model/`
+- [x] T009 [P] Create `Location.kt` data class in `app/src/main/java/labs/claucookie/pasbuk/domain/model/`
+- [x] T010 [P] Create `PassField.kt` data class in `app/src/main/java/labs/claucookie/pasbuk/domain/model/`
+- [x] T011 Create `Pass.kt` domain model in `app/src/main/java/labs/claucookie/pasbuk/domain/model/` (depends on T007-T010)
+- [x] T012 [P] Create `Journey.kt` domain model in `app/src/main/java/labs/claucookie/pasbuk/domain/model/`
 
 ### Repository Interfaces
 
-- [ ] T013 [P] Create custom exceptions in `app/src/main/java/labs/claucookie/pasbuk/domain/repository/` (InvalidPassException.kt, DuplicatePassException.kt, DuplicateJourneyNameException.kt)
-- [ ] T014 [P] Create `PassRepository.kt` interface in `app/src/main/java/labs/claucookie/pasbuk/domain/repository/`
-- [ ] T015 [P] Create `JourneyRepository.kt` interface in `app/src/main/java/labs/claucookie/pasbuk/domain/repository/`
+- [x] T013 [P] Create custom exceptions in `app/src/main/java/labs/claucookie/pasbuk/domain/repository/` (InvalidPassException.kt, DuplicatePassException.kt, DuplicateJourneyNameException.kt)
+- [x] T014 [P] Create `PassRepository.kt` interface in `app/src/main/java/labs/claucookie/pasbuk/domain/repository/`
+- [x] T015 [P] Create `JourneyRepository.kt` interface in `app/src/main/java/labs/claucookie/pasbuk/domain/repository/`
 
 ### Data Layer Foundation
 
-- [ ] T016 [P] Create `PassTypeConverter.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/` with Moshi-based type converters
-- [ ] T017 [P] Create `PassEntity.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/` with @Entity annotation
-- [ ] T018 [P] Create `JourneyEntity.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/`
-- [ ] T019 [P] Create `JourneyPassCrossRef.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/` with foreign keys
-- [ ] T020 [P] Create `JourneyWithPasses.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/` with @Relation annotations
-- [ ] T021 [P] Create `PassDao.kt` interface in `app/src/main/java/labs/claucookie/pasbuk/data/local/dao/` with Room queries
-- [ ] T022 [P] Create `JourneyDao.kt` interface in `app/src/main/java/labs/claucookie/pasbuk/data/local/dao/` with Room queries
-- [ ] T023 Create `AppDatabase.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/` (depends on T017-T022)
+- [x] T016 [P] Create `PassTypeConverter.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/` with Moshi-based type converters
+- [x] T017 [P] Create `PassEntity.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/` with @Entity annotation
+- [x] T018 [P] Create `JourneyEntity.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/`
+- [x] T019 [P] Create `JourneyPassCrossRef.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/` with foreign keys
+- [x] T020 [P] Create `JourneyWithPasses.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/entity/` with @Relation annotations
+- [x] T021 [P] Create `PassDao.kt` interface in `app/src/main/java/labs/claucookie/pasbuk/data/local/dao/` with Room queries
+- [x] T022 [P] Create `JourneyDao.kt` interface in `app/src/main/java/labs/claucookie/pasbuk/data/local/dao/` with Room queries
+- [x] T023 Create `AppDatabase.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/local/` (depends on T017-T022)
 
 ### Data Mappers
 
