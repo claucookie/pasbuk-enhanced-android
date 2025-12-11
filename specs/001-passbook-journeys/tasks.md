@@ -66,20 +66,20 @@
 
 ### Data Mappers
 
-- [ ] T024 [P] Create `PassMapper.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/mapper/` with toDomain() and toEntity() extension functions
-- [ ] T025 [P] Create `JourneyMapper.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/mapper/` with toDomain() and toEntity() extension functions
+- [x] T024 [P] Create `PassMapper.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/mapper/` with toDomain() and toEntity() extension functions
+- [x] T025 [P] Create `JourneyMapper.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/mapper/` with toDomain() and toEntity() extension functions
 
 ### Dependency Injection Modules
 
-- [ ] T026 [P] Create `DatabaseModule.kt` in `app/src/main/java/labs/claucookie/pasbuk/di/` providing AppDatabase, PassDao, JourneyDao
-- [ ] T027 [P] Create `MoshiModule.kt` in `app/src/main/java/labs/claucookie/pasbuk/di/` providing Moshi instance
-- [ ] T028 [P] Create `RepositoryModule.kt` in `app/src/main/java/labs/claucookie/pasbuk/di/` (placeholder, will bind repositories in later phases)
-- [ ] T029 [P] Create `UseCaseModule.kt` in `app/src/main/java/labs/claucookie/pasbuk/di/` (placeholder, will provide use cases in later phases)
+- [x] T026 [P] Create `DatabaseModule.kt` in `app/src/main/java/labs/claucookie/pasbuk/di/` providing AppDatabase, PassDao, JourneyDao
+- [x] T027 [P] Create `MoshiModule.kt` in `app/src/main/java/labs/claucookie/pasbuk/di/` providing Moshi instance
+- [x] T028 [P] Create `RepositoryModule.kt` in `app/src/main/java/labs/claucookie/pasbuk/di/` (placeholder, will bind repositories in later phases)
+- [x] T029 [P] Create `UseCaseModule.kt` in `app/src/main/java/labs/claucookie/pasbuk/di/` (placeholder, will provide use cases in later phases)
 
 ### Navigation Foundation
 
-- [ ] T030 [P] Create `Navigation.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/navigation/` with sealed Screen class and NavHost composable
-- [ ] T031 Update `MainActivity.kt` to use PasbukNavigation composable
+- [x] T030 [P] Create `Navigation.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/navigation/` with sealed Screen class and NavHost composable
+- [x] T031 Update `MainActivity.kt` to use PasbukNavigation composable
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
