@@ -107,44 +107,44 @@
 
 #### .pkpass Parser
 
-- [ ] T039 [US1] Create `PassJson.kt` data classes in `app/src/main/java/labs/claucookie/pasbuk/data/parser/` with Moshi @JsonClass annotations for pass.json structure
-- [ ] T040 [US1] Implement `PkpassParser.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/parser/` to extract ZIP, parse pass.json, save images to internal storage (depends on T039)
+- [x] T039 [US1] Create `PassJson.kt` data classes in `app/src/main/java/labs/claucookie/pasbuk/data/parser/` with Moshi @JsonClass annotations for pass.json structure
+- [x] T040 [US1] Implement `PkpassParser.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/parser/` to extract ZIP, parse pass.json, save images to internal storage (depends on T039)
 
 #### Repository Implementation
 
-- [ ] T041 [US1] Implement `PassRepositoryImpl.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/repository/` with importPass(), getPassById(), deletePass() methods (depends on T040)
-- [ ] T042 [US1] Update `RepositoryModule.kt` to bind PassRepository to PassRepositoryImpl
+- [x] T041 [US1] Implement `PassRepositoryImpl.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/repository/` with importPass(), getPassById(), deletePass() methods (depends on T040)
+- [x] T042 [US1] Update `RepositoryModule.kt` to bind PassRepository to PassRepositoryImpl
 
 #### Use Cases
 
-- [ ] T043 [P] [US1] Implement `ImportPassUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T042)
-- [ ] T044 [P] [US1] Implement `GetPassDetailUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T042)
-- [ ] T045 [P] [US1] Implement `DeletePassUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T042)
-- [ ] T046 [US1] Update `UseCaseModule.kt` to provide ImportPassUseCase, GetPassDetailUseCase, DeletePassUseCase
+- [x] T043 [P] [US1] Implement `ImportPassUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T042)
+- [x] T044 [P] [US1] Implement `GetPassDetailUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T042)
+- [x] T045 [P] [US1] Implement `DeletePassUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T042)
+- [x] T046 [US1] Update `UseCaseModule.kt` to provide ImportPassUseCase, GetPassDetailUseCase, DeletePassUseCase
 
 #### UI Components
 
-- [ ] T047 [P] [US1] Create `BarcodeDisplay.kt` composable in `app/src/main/java/labs/claucookie/pasbuk/ui/components/` using ZXing to render barcodes
-- [ ] T048 [P] [US1] Create `PassCard.kt` composable in `app/src/main/java/labs/claucookie/pasbuk/ui/components/` for pass summary display with Coil for images
+- [x] T047 [P] [US1] Create `BarcodeDisplay.kt` composable in `app/src/main/java/labs/claucookie/pasbuk/ui/components/` using ZXing to render barcodes
+- [x] T048 [P] [US1] Create `PassCard.kt` composable in `app/src/main/java/labs/claucookie/pasbuk/ui/components/` for pass summary display with Coil for images
 
 #### Pass Detail Screen
 
-- [ ] T049 [US1] Create `PassDetailUiState.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/passdetail/` with Loading, Success, Error states
-- [ ] T050 [US1] Implement `PassDetailViewModel.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/passdetail/` with @HiltViewModel, inject GetPassDetailUseCase (depends on T046)
-- [ ] T051 [US1] Implement `PassDetailScreen.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/passdetail/` displaying pass fields and barcode (depends on T047-T050)
-- [ ] T052 [US1] Add PassDetail route to Navigation.kt and wire up navigation parameter (passId)
+- [x] T049 [US1] Create `PassDetailUiState.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/passdetail/` with Loading, Success, Error states
+- [x] T050 [US1] Implement `PassDetailViewModel.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/passdetail/` with @HiltViewModel, inject GetPassDetailUseCase (depends on T046)
+- [x] T051 [US1] Implement `PassDetailScreen.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/passdetail/` displaying pass fields and barcode (depends on T047-T050)
+- [x] T052 [US1] Add PassDetail route to Navigation.kt and wire up navigation parameter (passId)
 
 #### Import Flow (File Picker Integration)
 
-- [ ] T053 [US1] Add file picker launcher to PassDetailViewModel or create ImportViewModel for handling file selection
-- [ ] T054 [US1] Create temporary import screen or dialog to trigger file picker and show import progress/errors
-- [ ] T055 [US1] Wire import flow to navigate to PassDetailScreen after successful import
+- [x] T053 [US1] Add file picker launcher to PassDetailViewModel or create ImportViewModel for handling file selection
+- [x] T054 [US1] Create temporary import screen or dialog to trigger file picker and show import progress/errors
+- [x] T055 [US1] Wire import flow to navigate to PassDetailScreen after successful import
 
 #### Error Handling & Edge Cases
 
-- [ ] T056 [US1] Add error handling for invalid .pkpass files (show user-friendly error message)
-- [ ] T057 [US1] Add error handling for corrupted .pkpass files (show "file unreadable" message)
-- [ ] T058 [US1] Implement duplicate detection by serialNumber (prevent duplicate imports)
+- [x] T056 [US1] Add error handling for invalid .pkpass files (show user-friendly error message)
+- [x] T057 [US1] Add error handling for corrupted .pkpass files (show "file unreadable" message)
+- [x] T058 [US1] Implement duplicate detection by serialNumber (prevent duplicate imports)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - user can import a pass and view its details
 

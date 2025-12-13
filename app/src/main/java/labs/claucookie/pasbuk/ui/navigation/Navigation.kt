@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import labs.claucookie.pasbuk.ui.screens.passdetail.PassDetailScreen
+import labs.claucookie.pasbuk.ui.screens.timeline.TimelineScreen
 
 /**
  * Sealed class representing all navigation destinations in the app.
@@ -67,8 +69,14 @@ fun PasbukNavigation(
     ) {
         // Timeline screen - start destination
         composable(route = Screen.Timeline.route) {
-            // TimelineScreen will be implemented in Phase 4 (User Story 2)
-            // Placeholder for now
+            TimelineScreen(
+                onNavigateToPassDetail = { passId ->
+                    navController.navigate(Screen.PassDetail.createRoute(passId))
+                },
+                onNavigateToJourneys = {
+                    navController.navigate(Screen.JourneyList.route)
+                }
+            )
         }
 
         // Pass detail screen
@@ -79,10 +87,10 @@ fun PasbukNavigation(
                     type = NavType.StringType
                 }
             )
-        ) { backStackEntry ->
-            val passId = backStackEntry.arguments?.getString(Screen.PassDetail.ARG_PASS_ID)
-            // PassDetailScreen will be implemented in Phase 3 (User Story 1)
-            // Placeholder for now
+        ) {
+            PassDetailScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
 
         // Journey list screen
