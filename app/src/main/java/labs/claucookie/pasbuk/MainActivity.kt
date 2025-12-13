@@ -10,7 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import labs.claucookie.pasbuk.ui.navigation.PasbukNavigation
-import labs.claucookie.pasbuk.ui.theme.PaskbukEnhancedTheme
+import labs.claucookie.pasbuk.ui.theme.PasbukEnhancedTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PaskbukEnhancedTheme {
+            PasbukEnhancedTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     PasbukNavigation(
                         modifier = Modifier.padding(innerPadding)

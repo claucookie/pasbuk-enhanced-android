@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Paskbuk Enhanced"
+rootProject.name = "Pasbuk Enhanced"
 include(":app")
  
