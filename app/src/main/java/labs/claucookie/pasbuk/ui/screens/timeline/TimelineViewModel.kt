@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import labs.claucookie.pasbuk.domain.repository.DuplicatePassException
 import labs.claucookie.pasbuk.domain.repository.InvalidPassException
-import labs.claucookie.pasbuk.domain.repository.PassRepository
+import labs.claucookie.pasbuk.domain.usecase.GetTimelineUseCase
 import labs.claucookie.pasbuk.domain.usecase.ImportPassUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class TimelineViewModel @Inject constructor(
-    private val passRepository: PassRepository,
+    private val getTimelineUseCase: GetTimelineUseCase,
     private val importPassUseCase: ImportPassUseCase
 ) : ViewModel() {
 
@@ -38,7 +38,7 @@ class TimelineViewModel @Inject constructor(
 
     private fun loadPasses() {
         viewModelScope.launch {
-            passRepository.getAllPassesSortedByDate()
+            getTimelineUseCase()
                 .catch { e ->
                     _uiState.value = TimelineUiState.Error(
                         e.message ?: "Failed to load passes"
