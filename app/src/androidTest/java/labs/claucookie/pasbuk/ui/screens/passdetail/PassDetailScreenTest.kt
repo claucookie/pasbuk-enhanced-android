@@ -1,18 +1,55 @@
 package labs.claucookie.pasbuk.ui.screens.passdetail
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import labs.claucookie.pasbuk.domain.model.Barcode
 import labs.claucookie.pasbuk.domain.model.BarcodeFormat
 import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.domain.model.PassField
 import labs.claucookie.pasbuk.domain.model.PassType
-import labs.claucookie.pasbuk.ui.theme.PasbukTheme
+import labs.claucookie.pasbuk.ui.components.BarcodeDisplay
+import labs.claucookie.pasbuk.ui.theme.PasbukEnhancedTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,7 +80,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailContentTestWrapper(pass = pass)
             }
         }
@@ -61,7 +98,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailContentTestWrapper(pass = pass)
             }
         }
@@ -79,7 +116,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailContentTestWrapper(pass = pass)
             }
         }
@@ -97,7 +134,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailContentTestWrapper(pass = pass)
             }
         }
@@ -115,7 +152,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailContentTestWrapper(pass = pass)
             }
         }
@@ -137,7 +174,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailContentTestWrapper(pass = pass)
             }
         }
@@ -164,7 +201,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailContentTestWrapper(pass = pass)
             }
         }
@@ -182,7 +219,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailContentTestWrapper(pass = pass)
             }
         }
@@ -197,13 +234,18 @@ class PassDetailScreenTest {
     fun successState_displaysDetailsSection_whenFieldsExist() {
         // Given
         val fields = mapOf(
-            "venue" to PassField(key = "venue", label = "Venue", value = "Madison Square Garden", textAlignment = null)
+            "venue" to PassField(
+                key = "venue",
+                label = "Venue",
+                value = "Madison Square Garden",
+                textAlignment = null
+            )
         )
         val pass = createTestPass().copy(fields = fields)
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailContentTestWrapper(pass = pass)
             }
         }
@@ -220,7 +262,7 @@ class PassDetailScreenTest {
     fun loadingState_displaysProgressIndicator() {
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailLoadingTestWrapper()
             }
         }
@@ -240,7 +282,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailErrorTestWrapper(message = errorMessage)
             }
         }
@@ -255,7 +297,7 @@ class PassDetailScreenTest {
     fun errorState_displaysRetryButton() {
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailErrorTestWrapper(message = "Error")
             }
         }
@@ -273,7 +315,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailErrorTestWrapper(
                     message = "Error",
                     onRetry = { retryClicked = true }
@@ -295,7 +337,7 @@ class PassDetailScreenTest {
     fun topBar_displaysTitle() {
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailTopBarTestWrapper()
             }
         }
@@ -310,7 +352,7 @@ class PassDetailScreenTest {
     fun topBar_backButtonIsDisplayed() {
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailTopBarTestWrapper()
             }
         }
@@ -325,7 +367,7 @@ class PassDetailScreenTest {
     fun topBar_deleteButtonIsDisplayed() {
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailTopBarTestWrapper()
             }
         }
@@ -343,7 +385,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailTopBarTestWrapper(onBackClick = { backClicked = true })
             }
         }
@@ -363,7 +405,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 PassDetailTopBarTestWrapper(onDeleteClick = { deleteClicked = true })
             }
         }
@@ -382,7 +424,7 @@ class PassDetailScreenTest {
     fun deleteDialog_displaysConfirmationMessage() {
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 DeleteDialogTestWrapper(showDialog = true)
             }
         }
@@ -400,7 +442,7 @@ class PassDetailScreenTest {
     fun deleteDialog_hasDeleteButton() {
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 DeleteDialogTestWrapper(showDialog = true)
             }
         }
@@ -415,7 +457,7 @@ class PassDetailScreenTest {
     fun deleteDialog_hasCancelButton() {
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 DeleteDialogTestWrapper(showDialog = true)
             }
         }
@@ -433,7 +475,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 DeleteDialogTestWrapper(
                     showDialog = true,
                     onConfirm = { confirmed = true }
@@ -456,7 +498,7 @@ class PassDetailScreenTest {
 
         // When
         composeTestRule.setContent {
-            PasbukTheme {
+            PasbukEnhancedTheme() {
                 DeleteDialogTestWrapper(
                     showDialog = true,
                     onDismiss = { dismissed = true }
@@ -507,58 +549,13 @@ class PassDetailScreenTest {
 // ==================== Test Wrapper Composables ====================
 // These wrapper composables expose private composables for testing
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import labs.claucookie.pasbuk.ui.components.BarcodeDisplay
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
-import coil.compose.AsyncImage
-import java.io.File
 
 @Composable
 fun PassDetailContentTestWrapper(pass: Pass) {
-    val backgroundColor = parseTestColor(pass.backgroundColor) ?: MaterialTheme.colorScheme.primaryContainer
-    val foregroundColor = parseTestColor(pass.foregroundColor) ?: MaterialTheme.colorScheme.onPrimaryContainer
+    val backgroundColor =
+        parseTestColor(pass.backgroundColor) ?: MaterialTheme.colorScheme.primaryContainer
+    val foregroundColor =
+        parseTestColor(pass.foregroundColor) ?: MaterialTheme.colorScheme.onPrimaryContainer
     val labelColor = parseTestColor(pass.labelColor) ?: foregroundColor.copy(alpha = 0.7f)
 
     Column(
@@ -820,9 +817,11 @@ private fun parseTestColor(colorString: String?): Color? {
                     .map { it.trim().toInt() }
                 if (values.size >= 3) Color(values[0], values[1], values[2]) else null
             }
+
             colorString.startsWith("#") -> {
                 Color(android.graphics.Color.parseColor(colorString))
             }
+
             else -> null
         }
     } catch (e: Exception) {

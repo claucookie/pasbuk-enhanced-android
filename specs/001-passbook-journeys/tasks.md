@@ -158,34 +158,34 @@
 
 ### Tests for User Story 2
 
-- [ ] T059 [P] [US2] Unit test for GetTimelineUseCase in `app/src/test/java/labs/claucookie/pasbuk/domain/usecase/GetTimelineUseCaseTest.kt`
-- [ ] T060 [P] [US2] Unit test for TimelineViewModel in `app/src/test/java/labs/claucookie/pasbuk/ui/screens/timeline/TimelineViewModelTest.kt` with MockK
-- [ ] T061 [P] [US2] Integration test for PassDao.getAllSortedByDate() in `app/src/androidTest/java/labs/claucookie/pasbuk/data/local/dao/PassDaoTest.kt`
-- [ ] T062 [P] [US2] UI test for TimelineScreen in `app/src/androidTest/java/labs/claucookie/pasbuk/ui/screens/timeline/TimelineScreenTest.kt` verifying chronological order
+- [x] T059 [P] [US2] Unit test for GetTimelineUseCase in `app/src/test/java/labs/claucookie/pasbuk/domain/usecase/GetTimelineUseCaseTest.kt`
+- [x] T060 [P] [US2] Unit test for TimelineViewModel in `app/src/test/java/labs/claucookie/pasbuk/ui/screens/timeline/TimelineViewModelTest.kt` with MockK
+- [x] T061 [P] [US2] Integration test for PassDao.getAllSortedByDate() in `app/src/androidTest/java/labs/claucookie/pasbuk/data/local/dao/PassDaoTest.kt`
+- [x] T062 [P] [US2] UI test for TimelineScreen in `app/src/androidTest/java/labs/claucookie/pasbuk/ui/screens/timeline/TimelineScreenTest.kt` verifying chronological order
 
 ### Implementation for User Story 2
 
 #### Repository Enhancement
 
-- [ ] T063 [US2] Add getAllPassesSortedByDate() implementation to PassRepositoryImpl.kt returning Flow<List<Pass>>
+- [x] T063 [US2] Add getAllPassesSortedByDate() implementation to PassRepositoryImpl.kt returning Flow<List<Pass>>
 
 #### Use Case
 
-- [ ] T064 [US2] Implement `GetTimelineUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T063)
-- [ ] T065 [US2] Update UseCaseModule.kt to provide GetTimelineUseCase
+- [x] T064 [US2] Implement `GetTimelineUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T063)
+- [x] T065 [US2] Update UseCaseModule.kt to provide GetTimelineUseCase
 
 #### Timeline Screen
 
-- [ ] T066 [US2] Create `TimelineUiState.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/timeline/` with Loading, Success(passes), Empty states
-- [ ] T067 [US2] Implement `TimelineViewModel.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/timeline/` with @HiltViewModel, inject GetTimelineUseCase (depends on T065)
-- [ ] T068 [US2] Implement `TimelineScreen.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/timeline/` with LazyColumn displaying PassCard items (depends on T048, T067)
-- [ ] T069 [US2] Add Timeline route to Navigation.kt and set as start destination
-- [ ] T070 [US2] Wire up PassCard click navigation to PassDetailScreen with passId parameter
+- [x] T066 [US2] Create `TimelineUiState.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/timeline/` with Loading, Success(passes), Empty states
+- [x] T067 [US2] Implement `TimelineViewModel.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/timeline/` with @HiltViewModel, inject GetTimelineUseCase (depends on T065)
+- [x] T068 [US2] Implement `TimelineScreen.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/timeline/` with LazyColumn displaying PassCard items (depends on T048, T067)
+- [x] T069 [US2] Add Timeline route to Navigation.kt and set as start destination
+- [x] T070 [US2] Wire up PassCard click navigation to PassDetailScreen with passId parameter
 
 #### Import Button Integration
 
-- [ ] T071 [US2] Add FloatingActionButton to TimelineScreen for triggering import flow
-- [ ] T072 [US2] Connect FAB to file picker launcher and import flow from User Story 1
+- [x] T071 [US2] Add FloatingActionButton to TimelineScreen for triggering import flow
+- [x] T072 [US2] Connect FAB to file picker launcher and import flow from User Story 1
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - user can import passes and see them in timeline
 
