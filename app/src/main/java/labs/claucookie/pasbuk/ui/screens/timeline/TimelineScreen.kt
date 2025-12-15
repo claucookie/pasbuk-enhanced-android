@@ -228,7 +228,7 @@ private fun ImportFab(
                     strokeWidth = 2.dp
                 )
             } else {
-                Icon(Icons.Default.Add, contentDescription = null)
+                Icon(Icons.Default.Add, contentDescription = "Import pass")
             }
         },
         text = { Text(if (isImporting) "Importing..." else "Import Pass") },
@@ -258,7 +258,7 @@ private fun EmptyContent() {
     ) {
         Icon(
             imageVector = Icons.Default.Folder,
-            contentDescription = null,
+            contentDescription = "Empty state: No passes",
             modifier = Modifier.size(80.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
         )

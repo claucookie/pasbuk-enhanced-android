@@ -21,6 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -28,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import labs.claucookie.pasbuk.ui.components.ConfirmationDialog
 import labs.claucookie.pasbuk.ui.components.PassCard
 
 /**
@@ -44,15 +48,28 @@ fun JourneyDetailScreen(
     viewModel: JourneyDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        ConfirmationDialog(
+            title = "Delete Journey",
+            message = "Are you sure you want to delete this journey? This action cannot be undone.",
+            confirmText = "Delete",
+            isDestructive = true,
+            onConfirm = {
+                showDeleteDialog = false
+                viewModel.deleteJourney()
+                onDeleteClick()
+            },
+            onDismiss = { showDeleteDialog = false }
+        )
+    }
 
     JourneyDetailScreen(
         uiState = uiState,
         onPassClick = onPassClick,
         onBackClick = onBackClick,
-        onDeleteClick = {
-            viewModel.deleteJourney()
-            onDeleteClick()
-        },
+        onDeleteClick = { showDeleteDialog = true },
         modifier = modifier
     )
 }

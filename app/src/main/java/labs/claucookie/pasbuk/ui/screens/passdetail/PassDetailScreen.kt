@@ -55,6 +55,7 @@ import coil.compose.AsyncImage
 import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.domain.model.PassField
 import labs.claucookie.pasbuk.ui.components.BarcodeDisplay
+import labs.claucookie.pasbuk.ui.components.ConfirmationDialog
 import java.io.File
 import java.time.Instant
 import java.time.ZoneId
@@ -81,7 +82,11 @@ fun PassDetailScreen(
     }
 
     if (showDeleteDialog) {
-        DeleteConfirmationDialog(
+        ConfirmationDialog(
+            title = "Delete Pass",
+            message = "Are you sure you want to delete this pass? This action cannot be undone.",
+            confirmText = "Delete",
+            isDestructive = true,
             onConfirm = {
                 showDeleteDialog = false
                 viewModel.onDeleteClick()
@@ -425,28 +430,6 @@ private fun InfoRow(label: String, value: String) {
             color = MaterialTheme.colorScheme.onSurface
         )
     }
-}
-
-@Composable
-private fun DeleteConfirmationDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Delete Pass") },
-        text = { Text("Are you sure you want to delete this pass? This action cannot be undone.") },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("Delete", color = MaterialTheme.colorScheme.error)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
 }
 
 private fun parsePassColor(colorString: String?): Color? {

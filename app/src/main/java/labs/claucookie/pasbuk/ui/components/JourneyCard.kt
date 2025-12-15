@@ -51,7 +51,7 @@ fun JourneyCard(
         ) {
             Icon(
                 imageVector = Icons.Default.Folder,
-                contentDescription = null,
+                contentDescription = "Journey icon",
                 tint = MaterialTheme.colorScheme.primary
             )
 
