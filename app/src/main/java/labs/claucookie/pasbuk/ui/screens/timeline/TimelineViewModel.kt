@@ -11,8 +11,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import labs.claucookie.pasbuk.domain.repository.DuplicateJourneyNameException
 import labs.claucookie.pasbuk.domain.repository.DuplicatePassException
 import labs.claucookie.pasbuk.domain.repository.InvalidPassException
+import labs.claucookie.pasbuk.domain.usecase.CreateJourneyUseCase
 import labs.claucookie.pasbuk.domain.usecase.GetTimelineUseCase
 import labs.claucookie.pasbuk.domain.usecase.ImportPassUseCase
 import javax.inject.Inject
@@ -20,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TimelineViewModel @Inject constructor(
     private val getTimelineUseCase: GetTimelineUseCase,
-    private val importPassUseCase: ImportPassUseCase
+    private val importPassUseCase: ImportPassUseCase,
+    private val createJourneyUseCase: CreateJourneyUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TimelineUiState>(TimelineUiState.Loading)
@@ -155,6 +158,33 @@ class TimelineViewModel @Inject constructor(
     fun navigateToJourneys() {
         viewModelScope.launch {
             _events.send(TimelineEvent.NavigateToJourneyList)
+        }
+    }
+
+    fun createJourney(name: String) {
+        viewModelScope.launch {
+            val selectedPassIds = getSelectedPasses()
+            if (selectedPassIds.isEmpty()) {
+                _events.send(TimelineEvent.ShowSnackbar("Please select at least one pass"))
+                return@launch
+            }
+
+            val result = createJourneyUseCase(name, selectedPassIds)
+            result.fold(
+                onSuccess = { journey ->
+                    clearSelection()
+                    _events.send(TimelineEvent.ShowSnackbar("Journey created successfully"))
+                    _events.send(TimelineEvent.NavigateToJourneyDetail(journey.id))
+                },
+                onFailure = { e ->
+                    val errorMessage = when (e) {
+                        is DuplicateJourneyNameException -> "A journey with this name already exists"
+                        is IllegalArgumentException -> e.message ?: "Invalid journey data"
+                        else -> e.message ?: "Failed to create journey"
+                    }
+                    _events.send(TimelineEvent.ShowSnackbar(errorMessage))
+                }
+            )
         }
     }
 }

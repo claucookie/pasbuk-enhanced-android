@@ -42,7 +42,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +58,7 @@ import labs.claucookie.pasbuk.ui.components.PassCard
 fun TimelineScreen(
     onNavigateToPassDetail: (String) -> Unit,
     onNavigateToJourneys: () -> Unit,
+    onNavigateToJourneyDetail: (Long) -> Unit = {},
     viewModel: TimelineViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -82,8 +85,23 @@ fun TimelineScreen(
                 is TimelineEvent.NavigateToJourneyList -> {
                     onNavigateToJourneys()
                 }
+                is TimelineEvent.NavigateToJourneyDetail -> {
+                    onNavigateToJourneyDetail(event.journeyId)
+                }
             }
         }
+    }
+
+    var showJourneyDialog by remember { mutableStateOf(false) }
+
+    if (showJourneyDialog) {
+        labs.claucookie.pasbuk.ui.components.JourneyNameDialog(
+            onDismiss = { showJourneyDialog = false },
+            onConfirm = { journeyName ->
+                showJourneyDialog = false
+                viewModel.createJourney(journeyName)
+            }
+        )
     }
 
     Scaffold(
@@ -92,7 +110,8 @@ fun TimelineScreen(
             TimelineTopBar(
                 uiState = uiState,
                 onClearSelection = viewModel::clearSelection,
-                onNavigateToJourneys = onNavigateToJourneys
+                onNavigateToJourneys = onNavigateToJourneys,
+                onCreateJourney = { showJourneyDialog = true }
             )
         },
         floatingActionButton = {
@@ -148,7 +167,8 @@ fun TimelineScreen(
 private fun TimelineTopBar(
     uiState: TimelineUiState,
     onClearSelection: () -> Unit,
-    onNavigateToJourneys: () -> Unit
+    onNavigateToJourneys: () -> Unit,
+    onCreateJourney: () -> Unit
 ) {
     val isSelectionMode = uiState is TimelineUiState.Success && uiState.isSelectionMode
     val selectedCount = if (uiState is TimelineUiState.Success) uiState.selectedCount else 0
@@ -172,7 +192,14 @@ private fun TimelineTopBar(
             }
         },
         actions = {
-            if (!isSelectionMode) {
+            if (isSelectionMode) {
+                IconButton(onClick = onCreateJourney) {
+                    Icon(
+                        imageVector = Icons.Default.Folder,
+                        contentDescription = "Create journey"
+                    )
+                }
+            } else {
                 IconButton(onClick = onNavigateToJourneys) {
                     Icon(
                         imageVector = Icons.Default.Map,

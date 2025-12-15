@@ -57,4 +57,9 @@ sealed interface TimelineEvent {
      * Navigate to journey list screen.
      */
     data object NavigateToJourneyList : TimelineEvent
+
+    /**
+     * Navigate to journey detail screen.
+     */
+    data class NavigateToJourneyDetail(val journeyId: Long) : TimelineEvent
 }
