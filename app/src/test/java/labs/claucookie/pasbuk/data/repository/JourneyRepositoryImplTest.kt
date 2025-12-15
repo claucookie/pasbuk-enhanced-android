@@ -1,6 +1,7 @@
 package labs.claucookie.pasbuk.data.repository
 
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -46,7 +47,9 @@ class JourneyRepositoryImplTest {
     fun setup() {
         journeyDao = mockk(relaxed = true)
         passDao = mockk(relaxed = true)
-        moshi = Moshi.Builder().build()
+        moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
         repository = JourneyRepositoryImpl(journeyDao, passDao, moshi)
     }
 

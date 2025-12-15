@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import labs.claucookie.pasbuk.ui.screens.journey.JourneyDetailScreen
+import labs.claucookie.pasbuk.ui.screens.journey.JourneyListScreen
 import labs.claucookie.pasbuk.ui.screens.passdetail.PassDetailScreen
 import labs.claucookie.pasbuk.ui.screens.timeline.TimelineScreen
 
@@ -75,6 +77,9 @@ fun PasbukNavigation(
                 },
                 onNavigateToJourneys = {
                     navController.navigate(Screen.JourneyList.route)
+                },
+                onNavigateToJourneyDetail = { journeyId ->
+                    navController.navigate(Screen.JourneyDetail.createRoute(journeyId))
                 }
             )
         }
@@ -95,8 +100,12 @@ fun PasbukNavigation(
 
         // Journey list screen
         composable(route = Screen.JourneyList.route) {
-            // JourneyListScreen will be implemented in Phase 5 (User Story 3)
-            // Placeholder for now
+            JourneyListScreen(
+                onJourneyClick = { journeyId ->
+                    navController.navigate(Screen.JourneyDetail.createRoute(journeyId))
+                },
+                onBackClick = { navController.popBackStack() }
+            )
         }
 
         // Journey detail screen
@@ -107,10 +116,14 @@ fun PasbukNavigation(
                     type = NavType.LongType
                 }
             )
-        ) { backStackEntry ->
-            val journeyId = backStackEntry.arguments?.getLong(Screen.JourneyDetail.ARG_JOURNEY_ID)
-            // JourneyDetailScreen will be implemented in Phase 5 (User Story 3)
-            // Placeholder for now
+        ) {
+            JourneyDetailScreen(
+                onPassClick = { passId ->
+                    navController.navigate(Screen.PassDetail.createRoute(passId))
+                },
+                onBackClick = { navController.popBackStack() },
+                onDeleteClick = { navController.popBackStack() }
+            )
         }
     }
 }

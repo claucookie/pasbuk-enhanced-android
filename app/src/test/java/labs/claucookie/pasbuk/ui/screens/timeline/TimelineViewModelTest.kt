@@ -15,6 +15,7 @@ import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.domain.model.PassType
 import labs.claucookie.pasbuk.domain.repository.DuplicatePassException
 import labs.claucookie.pasbuk.domain.repository.InvalidPassException
+import labs.claucookie.pasbuk.domain.usecase.CreateJourneyUseCase
 import labs.claucookie.pasbuk.domain.usecase.GetTimelineUseCase
 import labs.claucookie.pasbuk.domain.usecase.ImportPassUseCase
 import org.junit.Assert.assertEquals
@@ -39,6 +40,7 @@ class TimelineViewModelTest {
 
     private lateinit var getTimelineUseCase: GetTimelineUseCase
     private lateinit var importPassUseCase: ImportPassUseCase
+    private lateinit var createJourneyUseCase: CreateJourneyUseCase
     private lateinit var viewModel: TimelineViewModel
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -48,6 +50,7 @@ class TimelineViewModelTest {
         Dispatchers.setMain(testDispatcher)
         getTimelineUseCase = mockk()
         importPassUseCase = mockk()
+        createJourneyUseCase = mockk()
     }
 
     @Test
@@ -56,7 +59,7 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(emptyList())
 
         // When
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // Then: Initial state before flow collection completes
         // Note: Due to UnconfinedTestDispatcher, this might already be Success
@@ -74,7 +77,7 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(passes)
 
         // When
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // Then
         val state = viewModel.uiState.value as TimelineUiState.Success
@@ -91,7 +94,7 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(emptyList())
 
         // When
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // Then
         val state = viewModel.uiState.value as TimelineUiState.Success
@@ -107,7 +110,7 @@ class TimelineViewModelTest {
         val importedPass = createTestPass("imported-pass")
         coEvery { importPassUseCase(uri) } returns Result.success(importedPass)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // When
         viewModel.events.test {
@@ -135,7 +138,7 @@ class TimelineViewModelTest {
         val exception = DuplicatePassException(serialNumber = "SERIAL-123")
         coEvery { importPassUseCase(uri) } returns Result.failure(exception)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // When
         viewModel.events.test {
@@ -160,7 +163,7 @@ class TimelineViewModelTest {
         val exception = InvalidPassException("Invalid pass")
         coEvery { importPassUseCase(uri) } returns Result.failure(exception)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // When
         viewModel.events.test {
@@ -180,7 +183,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // When
         viewModel.events.test {
@@ -200,7 +203,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // When
         viewModel.onPassLongClick("pass-1")
@@ -218,7 +221,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"), createTestPass("pass-2"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // When: Enable selection mode
         viewModel.onPassLongClick("pass-1")
@@ -252,7 +255,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // When: Enable selection mode
         viewModel.onPassLongClick("pass-1")
@@ -271,7 +274,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"), createTestPass("pass-2"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // When
         viewModel.onPassLongClick("pass-1")
@@ -292,7 +295,7 @@ class TimelineViewModelTest {
         val pass = createTestPass("pass-1")
         coEvery { importPassUseCase(uri) } returns Result.success(pass)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
         viewModel.importPass(uri)
 
         // When
@@ -306,7 +309,7 @@ class TimelineViewModelTest {
     fun `navigateToJourneys sends NavigateToJourneyList event`() = runTest {
         // Given
         every { getTimelineUseCase() } returns flowOf(emptyList())
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
 
         // When
         viewModel.events.test {
