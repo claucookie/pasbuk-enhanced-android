@@ -199,58 +199,58 @@
 
 ### Tests for User Story 3
 
-- [ ] T073 [P] [US3] Unit test for CreateJourneyUseCase in `app/src/test/java/labs/claucookie/pasbuk/domain/usecase/CreateJourneyUseCaseTest.kt` (test name validation)
-- [ ] T074 [P] [US3] Unit test for GetAllJourneysUseCase in `app/src/test/java/labs/claucookie/pasbuk/domain/usecase/GetAllJourneysUseCaseTest.kt`
-- [ ] T075 [P] [US3] Unit test for GetJourneyDetailUseCase in `app/src/test/java/labs/claucookie/pasbuk/domain/usecase/GetJourneyDetailUseCaseTest.kt`
-- [ ] T076 [P] [US3] Unit test for JourneyRepositoryImpl in `app/src/test/java/labs/claucookie/pasbuk/data/repository/JourneyRepositoryImplTest.kt`
-- [ ] T077 [P] [US3] Integration test for JourneyDao in `app/src/androidTest/java/labs/claucookie/pasbuk/data/local/dao/JourneyDaoTest.kt` with in-memory database
-- [ ] T078 [P] [US3] Integration test for many-to-many relationship (JourneyPassCrossRef) in `app/src/androidTest/java/labs/claucookie/pasbuk/data/local/dao/JourneyDaoTest.kt`
-- [ ] T079 [P] [US3] UI test for JourneyListScreen in `app/src/androidTest/java/labs/claucookie/pasbuk/ui/screens/journey/JourneyListScreenTest.kt`
-- [ ] T080 [P] [US3] UI test for JourneyDetailScreen in `app/src/androidTest/java/labs/claucookie/pasbuk/ui/screens/journey/JourneyDetailScreenTest.kt`
+- [x] T073 [P] [US3] Unit test for CreateJourneyUseCase in `app/src/test/java/labs/claucookie/pasbuk/domain/usecase/CreateJourneyUseCaseTest.kt` (test name validation)
+- [x] T074 [P] [US3] Unit test for GetAllJourneysUseCase in `app/src/test/java/labs/claucookie/pasbuk/domain/usecase/GetAllJourneysUseCaseTest.kt`
+- [x] T075 [P] [US3] Unit test for GetJourneyDetailUseCase in `app/src/test/java/labs/claucookie/pasbuk/domain/usecase/GetJourneyDetailUseCaseTest.kt`
+- [x] T076 [P] [US3] Unit test for JourneyRepositoryImpl in `app/src/test/java/labs/claucookie/pasbuk/data/repository/JourneyRepositoryImplTest.kt`
+- [x] T077 [P] [US3] Integration test for JourneyDao in `app/src/androidTest/java/labs/claucookie/pasbuk/data/local/dao/JourneyDaoTest.kt` with in-memory database
+- [x] T078 [P] [US3] Integration test for many-to-many relationship (JourneyPassCrossRef) in `app/src/androidTest/java/labs/claucookie/pasbuk/data/local/dao/JourneyDaoTest.kt`
+- [x] T079 [P] [US3] UI test for JourneyListScreen in `app/src/androidTest/java/labs/claucookie/pasbuk/ui/screens/journey/JourneyListScreenTest.kt`
+- [x] T080 [P] [US3] UI test for JourneyDetailScreen in `app/src/androidTest/java/labs/claucookie/pasbuk/ui/screens/journey/JourneyDetailScreenTest.kt`
 
 ### Implementation for User Story 3
 
 #### Repository Implementation
 
-- [ ] T081 [US3] Implement `JourneyRepositoryImpl.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/repository/` with createJourney(), getAllJourneys(), getJourneyById(), deleteJourney() methods
-- [ ] T082 [US3] Update RepositoryModule.kt to bind JourneyRepository to JourneyRepositoryImpl
+- [x] T081 [US3] Implement `JourneyRepositoryImpl.kt` in `app/src/main/java/labs/claucookie/pasbuk/data/repository/` with createJourney(), getAllJourneys(), getJourneyById(), deleteJourney() methods
+- [x] T082 [US3] Update RepositoryModule.kt to bind JourneyRepository to JourneyRepositoryImpl
 
 #### Use Cases
 
-- [ ] T083 [P] [US3] Implement `CreateJourneyUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` with name validation (depends on T082)
-- [ ] T084 [P] [US3] Implement `GetAllJourneysUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T082)
-- [ ] T085 [P] [US3] Implement `GetJourneyDetailUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T082)
-- [ ] T086 [P] [US3] Implement `DeleteJourneyUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T082)
-- [ ] T087 [US3] Update UseCaseModule.kt to provide CreateJourneyUseCase, GetAllJourneysUseCase, GetJourneyDetailUseCase, DeleteJourneyUseCase
+- [x] T083 [P] [US3] Implement `CreateJourneyUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` with name validation (depends on T082)
+- [x] T084 [P] [US3] Implement `GetAllJourneysUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T082)
+- [x] T085 [P] [US3] Implement `GetJourneyDetailUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T082)
+- [x] T086 [P] [US3] Implement `DeleteJourneyUseCase.kt` in `app/src/main/java/labs/claucookie/pasbuk/domain/usecase/` (depends on T082)
+- [x] T087 [US3] Update UseCaseModule.kt to provide CreateJourneyUseCase, GetAllJourneysUseCase, GetJourneyDetailUseCase, DeleteJourneyUseCase
 
 #### UI Components
 
-- [ ] T088 [P] [US3] Create `JourneyCard.kt` composable in `app/src/main/java/labs/claucookie/pasbuk/ui/components/` displaying journey name and pass count
+- [x] T088 [P] [US3] Create `JourneyCard.kt` composable in `app/src/main/java/labs/claucookie/pasbuk/ui/components/` displaying journey name and pass count
 
 #### Journey List Screen
 
-- [ ] T089 [US3] Create `JourneyListUiState.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with Loading, Success(journeys), Empty states
-- [ ] T090 [US3] Implement `JourneyListViewModel.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with @HiltViewModel (depends on T087)
-- [ ] T091 [US3] Implement `JourneyListScreen.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with LazyColumn of JourneyCard items (depends on T088, T090)
-- [ ] T092 [US3] Add JourneyList route to Navigation.kt
-- [ ] T093 [US3] Add navigation to JourneyList from Timeline (e.g., bottom navigation or top app bar action)
+- [x] T089 [US3] Create `JourneyListUiState.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with Loading, Success(journeys), Empty states
+- [x] T090 [US3] Implement `JourneyListViewModel.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with @HiltViewModel (depends on T087)
+- [x] T091 [US3] Implement `JourneyListScreen.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with LazyColumn of JourneyCard items (depends on T088, T090)
+- [x] T092 [US3] Add JourneyList route to Navigation.kt
+- [x] T093 [US3] Add navigation to JourneyList from Timeline (e.g., bottom navigation or top app bar action)
 
 #### Journey Detail Screen
 
-- [ ] T094 [US3] Create `JourneyDetailUiState.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with Loading, Success(journey with passes), Error states
-- [ ] T095 [US3] Implement `JourneyDetailViewModel.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with @HiltViewModel (depends on T087)
-- [ ] T096 [US3] Implement `JourneyDetailScreen.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` showing journey name and sorted pass list (depends on T095)
-- [ ] T097 [US3] Add JourneyDetail route to Navigation.kt with journeyId parameter
-- [ ] T098 [US3] Wire up JourneyCard click to navigate to JourneyDetailScreen
+- [x] T094 [US3] Create `JourneyDetailUiState.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with Loading, Success(journey with passes), Error states
+- [x] T095 [US3] Implement `JourneyDetailViewModel.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` with @HiltViewModel (depends on T087)
+- [x] T096 [US3] Implement `JourneyDetailScreen.kt` in `app/src/main/java/labs/claucookie/pasbuk/ui/screens/journey/` showing journey name and sorted pass list (depends on T095)
+- [x] T097 [US3] Add JourneyDetail route to Navigation.kt with journeyId parameter
+- [x] T098 [US3] Wire up JourneyCard click to navigate to JourneyDetailScreen
 
 #### Create Journey Flow (Multi-Selection)
 
-- [ ] T099 [US3] Add multi-selection mode to TimelineScreen with Checkbox overlays on PassCard items
-- [ ] T100 [US3] Add "Create Journey" action button (FAB or top bar action) that appears when passes are selected
-- [ ] T101 [US3] Create journey name input dialog composable in TimelineViewModel or separate dialog
-- [ ] T102 [US3] Wire Create Journey button to call CreateJourneyUseCase with selected pass IDs and user-provided name
-- [ ] T103 [US3] Navigate to JourneyDetailScreen after successful journey creation
-- [ ] T104 [US3] Add success/error snackbar messages for journey creation
+- [x] T099 [US3] Add multi-selection mode to TimelineScreen with Checkbox overlays on PassCard items
+- [x] T100 [US3] Add "Create Journey" action button (FAB or top bar action) that appears when passes are selected
+- [x] T101 [US3] Create journey name input dialog composable in TimelineViewModel or separate dialog
+- [x] T102 [US3] Wire Create Journey button to call CreateJourneyUseCase with selected pass IDs and user-provided name
+- [x] T103 [US3] Navigate to JourneyDetailScreen after successful journey creation
+- [x] T104 [US3] Add success/error snackbar messages for journey creation
 
 **Checkpoint**: All user stories should now be independently functional - import, timeline, and journeys all working
 
