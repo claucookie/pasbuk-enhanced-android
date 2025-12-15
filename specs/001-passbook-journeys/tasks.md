@@ -269,7 +269,7 @@
 
 ### Accessibility
 
-- [ ] T109 [P] Add content descriptions to all images and icons for TalkBack
+- [x] T109 [P] Add content descriptions to all images and icons for TalkBack
 - [ ] T110 [P] Verify color contrast ratios meet WCAG AA standards (Material3 should handle this)
 - [ ] T111 [P] Test navigation with TalkBack enabled
 - [ ] T112 [P] Add semantic properties to interactive elements (buttons, cards)
@@ -278,13 +278,13 @@
 
 - [ ] T113 [P] Add global error handling for uncaught exceptions
 - [ ] T114 [P] Add retry mechanism for failed imports
-- [ ] T115 [P] Add confirmation dialog for delete operations (pass and journey)
+- [x] T115 [P] Add confirmation dialog for delete operations (pass and journey)
 - [ ] T116 [P] Handle low storage scenarios gracefully
 
 ### Code Quality
 
-- [ ] T117 [P] Run lint checks and fix all errors: `./gradlew lint`
-- [ ] T118 [P] Verify test coverage meets 70%+ target: `./gradlew testDebugUnitTestCoverage`
+- [x] T117 [P] Run lint checks and fix all errors: `./gradlew lint`
+- [x] T118 [P] Verify test coverage meets 70%+ target: `./gradlew testDebugUnitTestCoverage`
 - [ ] T119 [P] Code review for Kotlin conventions adherence
 - [ ] T120 [P] Add KDoc comments to public APIs
 
