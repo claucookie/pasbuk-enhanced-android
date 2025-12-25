@@ -1,8 +1,10 @@
 package labs.claucookie.pasbuk.data.repository
 
+import android.content.Context
 import android.net.Uri
 import androidx.paging.PagingSource
 import com.squareup.moshi.Moshi
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,17 +17,22 @@ import labs.claucookie.pasbuk.data.parser.PkpassParser
 import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.domain.repository.DuplicatePassException
 import labs.claucookie.pasbuk.domain.repository.PassRepository
+import labs.claucookie.pasbuk.util.StorageUtils
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class PassRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val passDao: PassDao,
     private val pkpassParser: PkpassParser,
     private val moshi: Moshi
 ) : PassRepository {
 
     override suspend fun importPass(uri: Uri): Pass = withContext(Dispatchers.IO) {
+        // Check storage availability before importing
+        StorageUtils.checkStorageAvailability(context)
+
         // Parse the .pkpass file
         val pass = pkpassParser.parse(uri)
 

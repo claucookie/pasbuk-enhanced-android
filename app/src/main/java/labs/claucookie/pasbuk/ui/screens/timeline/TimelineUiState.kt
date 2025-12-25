@@ -34,7 +34,7 @@ sealed interface TimelineUiState {
  */
 sealed interface ImportState {
     data object Idle : ImportState
-    data object Importing : ImportState
+    data class Importing(val attempt: Int = 1, val maxAttempts: Int = 3) : ImportState
     data class Success(val passId: String) : ImportState
     data class Error(val message: String) : ImportState
 }

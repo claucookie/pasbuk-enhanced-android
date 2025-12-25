@@ -276,10 +276,10 @@
 
 ### Error Handling & Edge Cases
 
-- [ ] T113 [P] Add global error handling for uncaught exceptions
-- [ ] T114 [P] Add retry mechanism for failed imports
+- [x] T113 [P] Add global error handling for uncaught exceptions
+- [x] T114 [P] Add retry mechanism for failed imports
 - [x] T115 [P] Add confirmation dialog for delete operations (pass and journey)
-- [ ] T116 [P] Handle low storage scenarios gracefully
+- [x] T116 [P] Handle low storage scenarios gracefully
 
 ### Code Quality
 

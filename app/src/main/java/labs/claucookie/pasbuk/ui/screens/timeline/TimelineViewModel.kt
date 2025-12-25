@@ -24,7 +24,9 @@ import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.domain.repository.DuplicateJourneyNameException
 import labs.claucookie.pasbuk.domain.repository.DuplicatePassException
 import labs.claucookie.pasbuk.domain.repository.InvalidPassException
+import labs.claucookie.pasbuk.domain.repository.LowStorageException
 import labs.claucookie.pasbuk.domain.repository.PassRepository
+import labs.claucookie.pasbuk.util.StorageUtils
 import labs.claucookie.pasbuk.domain.usecase.CreateJourneyUseCase
 import labs.claucookie.pasbuk.domain.usecase.GetTimelineUseCase
 import labs.claucookie.pasbuk.domain.usecase.ImportPassUseCase
@@ -101,9 +103,13 @@ class TimelineViewModel @Inject constructor(
 
     fun importPass(uri: Uri) {
         viewModelScope.launch {
-            _importState.value = ImportState.Importing
+            _importState.value = ImportState.Importing(attempt = 1, maxAttempts = 3)
 
-            val result = importPassUseCase(uri)
+            val result = importPassUseCase(uri) { attempt ->
+                // Update state to show retry progress
+                _importState.value = ImportState.Importing(attempt = attempt, maxAttempts = 3)
+            }
+
             result.fold(
                 onSuccess = { pass ->
                     _importState.value = ImportState.Success(pass.id)
@@ -114,6 +120,10 @@ class TimelineViewModel @Inject constructor(
                     val errorMessage = when (e) {
                         is DuplicatePassException -> "This pass has already been imported"
                         is InvalidPassException -> "Invalid or corrupted pass file"
+                        is LowStorageException -> {
+                            "Insufficient storage: ${StorageUtils.formatBytes(e.availableBytes)} available. " +
+                                "Please free up space and try again."
+                        }
                         else -> e.message ?: "Failed to import pass"
                     }
                     _importState.value = ImportState.Error(errorMessage)
