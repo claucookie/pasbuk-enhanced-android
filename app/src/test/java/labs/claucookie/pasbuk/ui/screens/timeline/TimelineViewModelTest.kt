@@ -1,7 +1,10 @@
 package labs.claucookie.pasbuk.ui.screens.timeline
 
 import android.net.Uri
+import androidx.paging.PagingSource
 import app.cash.turbine.test
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -11,10 +14,12 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import labs.claucookie.pasbuk.data.local.entity.PassEntity
 import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.domain.model.PassType
 import labs.claucookie.pasbuk.domain.repository.DuplicatePassException
 import labs.claucookie.pasbuk.domain.repository.InvalidPassException
+import labs.claucookie.pasbuk.domain.repository.PassRepository
 import labs.claucookie.pasbuk.domain.usecase.CreateJourneyUseCase
 import labs.claucookie.pasbuk.domain.usecase.GetTimelineUseCase
 import labs.claucookie.pasbuk.domain.usecase.ImportPassUseCase
@@ -41,6 +46,8 @@ class TimelineViewModelTest {
     private lateinit var getTimelineUseCase: GetTimelineUseCase
     private lateinit var importPassUseCase: ImportPassUseCase
     private lateinit var createJourneyUseCase: CreateJourneyUseCase
+    private lateinit var passRepository: PassRepository
+    private lateinit var moshi: Moshi
     private lateinit var viewModel: TimelineViewModel
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -51,6 +58,14 @@ class TimelineViewModelTest {
         getTimelineUseCase = mockk()
         importPassUseCase = mockk()
         createJourneyUseCase = mockk()
+        passRepository = mockk(relaxed = true)
+        moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
+
+        // Mock the paging source
+        val mockPagingSource = mockk<PagingSource<Int, PassEntity>>(relaxed = true)
+        every { passRepository.getAllPassesSortedByDatePaged() } returns mockPagingSource
     }
 
     @Test
@@ -59,7 +74,7 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(emptyList())
 
         // When
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // Then: Initial state before flow collection completes
         // Note: Due to UnconfinedTestDispatcher, this might already be Success
@@ -77,7 +92,7 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(passes)
 
         // When
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // Then
         val state = viewModel.uiState.value as TimelineUiState.Success
@@ -94,7 +109,7 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(emptyList())
 
         // When
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // Then
         val state = viewModel.uiState.value as TimelineUiState.Success
@@ -108,9 +123,9 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(emptyList())
         val uri = mockk<Uri>()
         val importedPass = createTestPass("imported-pass")
-        coEvery { importPassUseCase(uri) } returns Result.success(importedPass)
+        coEvery { importPassUseCase(uri, any()) } returns Result.success(importedPass)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // When
         viewModel.events.test {
@@ -136,9 +151,9 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(emptyList())
         val uri = mockk<Uri>()
         val exception = DuplicatePassException(serialNumber = "SERIAL-123")
-        coEvery { importPassUseCase(uri) } returns Result.failure(exception)
+        coEvery { importPassUseCase(uri, any()) } returns Result.failure(exception)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // When
         viewModel.events.test {
@@ -161,9 +176,9 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(emptyList())
         val uri = mockk<Uri>()
         val exception = InvalidPassException("Invalid pass")
-        coEvery { importPassUseCase(uri) } returns Result.failure(exception)
+        coEvery { importPassUseCase(uri, any()) } returns Result.failure(exception)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // When
         viewModel.events.test {
@@ -183,7 +198,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // When
         viewModel.events.test {
@@ -203,7 +218,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // When
         viewModel.onPassLongClick("pass-1")
@@ -221,7 +236,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"), createTestPass("pass-2"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // When: Enable selection mode
         viewModel.onPassLongClick("pass-1")
@@ -255,7 +270,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // When: Enable selection mode
         viewModel.onPassLongClick("pass-1")
@@ -274,7 +289,7 @@ class TimelineViewModelTest {
         val passes = listOf(createTestPass("pass-1"), createTestPass("pass-2"))
         every { getTimelineUseCase() } returns flowOf(passes)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // When
         viewModel.onPassLongClick("pass-1")
@@ -293,9 +308,9 @@ class TimelineViewModelTest {
         every { getTimelineUseCase() } returns flowOf(emptyList())
         val uri = mockk<Uri>()
         val pass = createTestPass("pass-1")
-        coEvery { importPassUseCase(uri) } returns Result.success(pass)
+        coEvery { importPassUseCase(uri, any()) } returns Result.success(pass)
 
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
         viewModel.importPass(uri)
 
         // When
@@ -309,7 +324,7 @@ class TimelineViewModelTest {
     fun `navigateToJourneys sends NavigateToJourneyList event`() = runTest {
         // Given
         every { getTimelineUseCase() } returns flowOf(emptyList())
-        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase)
+        viewModel = TimelineViewModel(getTimelineUseCase, importPassUseCase, createJourneyUseCase, passRepository, moshi)
 
         // When
         viewModel.events.test {

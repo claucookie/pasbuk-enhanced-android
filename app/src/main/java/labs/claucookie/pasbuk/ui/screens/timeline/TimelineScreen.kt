@@ -172,7 +172,7 @@ fun TimelineScreen(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                ImportLoadingOverlay()
+                ImportLoadingOverlay(importState = importState)
             }
         }
     }
@@ -422,7 +422,18 @@ private fun PagedTimelineContent(
 }
 
 @Composable
-private fun ImportLoadingOverlay() {
+private fun ImportLoadingOverlay(importState: ImportState) {
+    val message = when (importState) {
+        is ImportState.Importing -> {
+            if (importState.attempt > 1) {
+                "Retrying import (${importState.attempt}/${importState.maxAttempts})..."
+            } else {
+                "Importing pass..."
+            }
+        }
+        else -> "Importing pass..."
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -436,9 +447,10 @@ private fun ImportLoadingOverlay() {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Importing pass...",
+                text = message,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center
             )
         }
     }

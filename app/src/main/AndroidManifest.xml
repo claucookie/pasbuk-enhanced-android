@@ -23,6 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Error activity for uncaught exceptions -->
+        <activity
+            android:name=".util.ErrorActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PasbukEnhanced" />
     </application>
 
 </manifest>

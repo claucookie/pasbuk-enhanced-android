@@ -1,6 +1,8 @@
 package labs.claucookie.pasbuk.data.repository
 
+import android.content.Context
 import android.net.Uri
+import android.os.StatFs
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.mockk.Runs
@@ -9,6 +11,8 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkConstructor
+import io.mockk.unmockkConstructor
 import io.mockk.verify
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -19,12 +23,14 @@ import labs.claucookie.pasbuk.data.parser.PkpassParser
 import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.domain.model.PassType
 import labs.claucookie.pasbuk.domain.repository.DuplicatePassException
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 import java.time.Instant
 
 /**
@@ -38,6 +44,7 @@ import java.time.Instant
  */
 class PassRepositoryImplTest {
 
+    private lateinit var context: Context
     private lateinit var passDao: PassDao
     private lateinit var pkpassParser: PkpassParser
     private lateinit var moshi: Moshi
@@ -45,13 +52,24 @@ class PassRepositoryImplTest {
 
     @Before
     fun setup() {
+        context = mockk(relaxed = true)
         passDao = mockk(relaxed = true)
         pkpassParser = mockk()
         moshi = Moshi.Builder()
             .addLast(KotlinJsonAdapterFactory())
             .build()
 
-        repository = PassRepositoryImpl(passDao, pkpassParser, moshi)
+        // Mock storage check - provide sufficient storage by default
+        every { context.filesDir } returns File("/mock/path")
+        mockkConstructor(StatFs::class)
+        every { anyConstructed<StatFs>().availableBytes } returns 100L * 1024 * 1024 // 100MB
+
+        repository = PassRepositoryImpl(context, passDao, pkpassParser, moshi)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkConstructor(StatFs::class)
     }
 
     // ==================== Import Tests ====================
