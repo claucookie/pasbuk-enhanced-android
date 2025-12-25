@@ -1,12 +1,14 @@
 package labs.claucookie.pasbuk.data.repository
 
 import android.net.Uri
+import androidx.paging.PagingSource
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import labs.claucookie.pasbuk.data.local.dao.PassDao
+import labs.claucookie.pasbuk.data.local.entity.PassEntity
 import labs.claucookie.pasbuk.data.mapper.toDomain
 import labs.claucookie.pasbuk.data.mapper.toEntity
 import labs.claucookie.pasbuk.data.parser.PkpassParser
@@ -51,6 +53,10 @@ class PassRepositoryImpl @Inject constructor(
         return passDao.getAllSortedByDate().map { entities ->
             entities.map { it.toDomain(moshi) }
         }
+    }
+
+    override fun getAllPassesSortedByDatePaged(): PagingSource<Int, PassEntity> {
+        return passDao.getAllSortedByDatePaged()
     }
 
     override suspend fun deletePass(id: String): Unit = withContext(Dispatchers.IO) {

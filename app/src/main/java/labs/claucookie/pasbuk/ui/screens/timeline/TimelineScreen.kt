@@ -51,6 +51,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.ui.components.PassCard
 
@@ -63,6 +66,7 @@ fun TimelineScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val importState by viewModel.importState.collectAsStateWithLifecycle()
+    val pagedPasses = viewModel.pagedPasses.collectAsLazyPagingItems()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // File picker launcher
@@ -130,14 +134,26 @@ fun TimelineScreen(
         ) {
             when (val state = uiState) {
                 is TimelineUiState.Loading -> {
-                    LoadingContent()
+                    // Show loading only on initial load
+                    if (pagedPasses.itemCount == 0 && pagedPasses.loadState.refresh is LoadState.Loading) {
+                        LoadingContent()
+                    } else {
+                        // Use paged content during refresh
+                        PagedTimelineContent(
+                            pagedPasses = pagedPasses,
+                            selectedPassIds = emptySet(),
+                            isSelectionMode = false,
+                            onPassClick = viewModel::onPassClick,
+                            onPassLongClick = viewModel::onPassLongClick
+                        )
+                    }
                 }
                 is TimelineUiState.Success -> {
-                    if (state.isEmpty) {
+                    if (state.isEmpty && pagedPasses.itemCount == 0) {
                         EmptyContent()
                     } else {
-                        TimelineContent(
-                            passes = state.passes,
+                        PagedTimelineContent(
+                            pagedPasses = pagedPasses,
                             selectedPassIds = state.selectedPassIds,
                             isSelectionMode = state.isSelectionMode,
                             onPassClick = viewModel::onPassClick,
@@ -329,6 +345,78 @@ private fun TimelineContent(
                     ),
                 isSelected = selectedPassIds.contains(pass.id)
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun PagedTimelineContent(
+    pagedPasses: LazyPagingItems<Pass>,
+    selectedPassIds: Set<String>,
+    isSelectionMode: Boolean,
+    onPassClick: (String) -> Unit,
+    onPassLongClick: (String) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 8.dp,
+            bottom = 88.dp // Extra space for FAB
+        ),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(
+            count = pagedPasses.itemCount,
+            key = { index -> pagedPasses[index]?.id ?: index }
+        ) { index ->
+            val pass = pagedPasses[index]
+            if (pass != null) {
+                PassCard(
+                    pass = pass,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            onClick = { onPassClick(pass.id) },
+                            onLongClick = { onPassLongClick(pass.id) }
+                        ),
+                    isSelected = selectedPassIds.contains(pass.id)
+                )
+            }
+        }
+
+        // Loading state for pagination
+        when (pagedPasses.loadState.append) {
+            is LoadState.Loading -> {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                    }
+                }
+            }
+            is LoadState.Error -> {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Error loading more passes",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
+            else -> {}
         }
     }
 }
