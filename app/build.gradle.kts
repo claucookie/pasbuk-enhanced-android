@@ -66,7 +66,12 @@ dependencies {
     // Room - Local Database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.room.paging)
     ksp(libs.room.compiler)
+
+    // Paging - Pagination
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
 
     // Moshi - JSON Parsing
     implementation(libs.moshi.kotlin)

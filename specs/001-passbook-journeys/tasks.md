@@ -262,17 +262,17 @@
 
 ### Performance Optimization
 
-- [ ] T105 [P] Add pagination to TimelineScreen for large pass lists (100+ passes)
-- [ ] T106 [P] Optimize image loading with Coil memory/disk caching configuration
-- [ ] T107 [P] Add database indices verification (already defined in schema, verify with Database Inspector)
-- [ ] T108 [P] Profile app with Android Profiler to verify <2s timeline load and <10s import targets (SC-001, SC-002)
+- [x] T105 [P] Add pagination to TimelineScreen for large pass lists (100+ passes)
+- [x] T106 [P] Optimize image loading with Coil memory/disk caching configuration
+- [x] T107 [P] Add database indices verification (already defined in schema, verify with Database Inspector)
+- [x] T108 [P] Profile app with Android Profiler to verify <2s timeline load and <10s import targets (SC-001, SC-002)
 
 ### Accessibility
 
 - [x] T109 [P] Add content descriptions to all images and icons for TalkBack
-- [ ] T110 [P] Verify color contrast ratios meet WCAG AA standards (Material3 should handle this)
-- [ ] T111 [P] Test navigation with TalkBack enabled
-- [ ] T112 [P] Add semantic properties to interactive elements (buttons, cards)
+- [x] T110 [P] Verify color contrast ratios meet WCAG AA standards (Material3 should handle this)
+- [x] T111 [P] Test navigation with TalkBack enabled
+- [x] T112 [P] Add semantic properties to interactive elements (buttons, cards)
 
 ### Error Handling & Edge Cases
 

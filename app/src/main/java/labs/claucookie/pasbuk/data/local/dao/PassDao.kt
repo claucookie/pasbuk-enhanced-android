@@ -1,5 +1,6 @@
 package labs.claucookie.pasbuk.data.local.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -28,6 +29,9 @@ interface PassDao {
 
     @Query("SELECT * FROM passes ORDER BY CASE WHEN relevantDate IS NULL THEN 1 ELSE 0 END, relevantDate DESC")
     fun getAllSortedByDate(): Flow<List<PassEntity>>
+
+    @Query("SELECT * FROM passes ORDER BY CASE WHEN relevantDate IS NULL THEN 1 ELSE 0 END, relevantDate DESC")
+    fun getAllSortedByDatePaged(): PagingSource<Int, PassEntity>
 
     @Query("SELECT * FROM passes")
     fun getAll(): Flow<List<PassEntity>>

@@ -3,17 +3,28 @@ package labs.claucookie.pasbuk.ui.screens.timeline
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
+import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import labs.claucookie.pasbuk.data.mapper.toDomain
+import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.domain.repository.DuplicateJourneyNameException
 import labs.claucookie.pasbuk.domain.repository.DuplicatePassException
 import labs.claucookie.pasbuk.domain.repository.InvalidPassException
+import labs.claucookie.pasbuk.domain.repository.PassRepository
 import labs.claucookie.pasbuk.domain.usecase.CreateJourneyUseCase
 import labs.claucookie.pasbuk.domain.usecase.GetTimelineUseCase
 import labs.claucookie.pasbuk.domain.usecase.ImportPassUseCase
@@ -23,7 +34,9 @@ import javax.inject.Inject
 class TimelineViewModel @Inject constructor(
     private val getTimelineUseCase: GetTimelineUseCase,
     private val importPassUseCase: ImportPassUseCase,
-    private val createJourneyUseCase: CreateJourneyUseCase
+    private val createJourneyUseCase: CreateJourneyUseCase,
+    private val passRepository: PassRepository,
+    private val moshi: Moshi
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TimelineUiState>(TimelineUiState.Loading)
@@ -34,6 +47,21 @@ class TimelineViewModel @Inject constructor(
 
     private val _events = Channel<TimelineEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
+
+    // Paging data flow for efficient handling of large lists
+    val pagedPasses: Flow<PagingData<Pass>> = Pager(
+        config = PagingConfig(
+            pageSize = 20,
+            enablePlaceholders = false,
+            initialLoadSize = 40
+        )
+    ) {
+        passRepository.getAllPassesSortedByDatePaged()
+    }.flow
+        .map { pagingData ->
+            pagingData.map { entity -> entity.toDomain(moshi) }
+        }
+        .cachedIn(viewModelScope)
 
     init {
         loadPasses()
