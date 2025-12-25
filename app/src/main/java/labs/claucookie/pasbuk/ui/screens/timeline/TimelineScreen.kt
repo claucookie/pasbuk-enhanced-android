@@ -321,7 +321,6 @@ private fun TimelineContent(
         ) { pass ->
             PassCard(
                 pass = pass,
-                onClick = { onPassClick(pass.id) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .combinedClickable(
