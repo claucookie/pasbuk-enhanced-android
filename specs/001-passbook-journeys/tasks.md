@@ -291,16 +291,16 @@
 ### Documentation
 
 - [x] T121 [P] Update README.md with feature overview and screenshots
-- [ ] T122 [P] Create sample .pkpass files for testing in `app/src/androidTest/assets/`
-- [ ] T123 [P] Document Room database schema export
+- [x] T122 [P] Create sample .pkpass files for testing in `app/src/androidTest/assets/`
+- [x] T123 [P] Document Room database schema export
 
 ### Final Validation
 
-- [ ] T124 Run full test suite: `./gradlew test connectedAndroidTest`
-- [ ] T125 Verify all acceptance scenarios from spec.md manually
-- [ ] T126 Run quickstart.md verification checklist
-- [ ] T127 Performance validation: Import pass <10s, Timeline load <2s with 100 passes
-- [ ] T128 Create demo video or screenshots for PR
+- [x] T124 Run full test suite: `./gradlew test connectedAndroidTest`
+- [x] T125 Verify all acceptance scenarios from spec.md manually
+- [x] T126 Run quickstart.md verification checklist
+- [x] T127 Performance validation: Import pass <10s, Timeline load <2s with 100 passes
+- [x] T128 Create demo video or screenshots for PR
 
 ---
 
