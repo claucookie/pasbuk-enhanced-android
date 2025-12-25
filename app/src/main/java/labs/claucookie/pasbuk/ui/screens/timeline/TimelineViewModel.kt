@@ -32,6 +32,17 @@ import labs.claucookie.pasbuk.domain.usecase.GetTimelineUseCase
 import labs.claucookie.pasbuk.domain.usecase.ImportPassUseCase
 import javax.inject.Inject
 
+/**
+ * ViewModel for the Timeline screen.
+ *
+ * Manages the state and user interactions for the main pass timeline, including:
+ * - Loading and displaying passes chronologically
+ * - Importing new passes from .pkpass files
+ * - Multi-selection mode for creating journeys
+ * - Navigation to pass details and journey screens
+ *
+ * Uses paging for efficient handling of large pass lists.
+ */
 @HiltViewModel
 class TimelineViewModel @Inject constructor(
     private val getTimelineUseCase: GetTimelineUseCase,
@@ -101,6 +112,14 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Imports a .pkpass file from the given URI.
+     *
+     * Automatically retries up to 3 times with exponential backoff for transient errors.
+     * Shows retry progress in the import state. On success, navigates to the pass detail screen.
+     *
+     * @param uri URI to the .pkpass file (from file picker or share intent)
+     */
     fun importPass(uri: Uri) {
         viewModelScope.launch {
             _importState.value = ImportState.Importing(attempt = 1, maxAttempts = 3)
@@ -133,10 +152,25 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Clears the import state back to idle.
+     *
+     * Should be called after navigating away from the timeline or when
+     * dismissing import-related UI feedback.
+     */
     fun clearImportState() {
         _importState.value = ImportState.Idle
     }
 
+    /**
+     * Handles pass card clicks.
+     *
+     * Behavior depends on selection mode:
+     * - In selection mode: Toggles pass selection for journey creation
+     * - Normal mode: Navigates to pass detail screen
+     *
+     * @param passId The ID of the clicked pass
+     */
     fun onPassClick(passId: String) {
         val currentState = _uiState.value
         if (currentState is TimelineUiState.Success && currentState.isSelectionMode) {
@@ -148,6 +182,14 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Handles pass card long-press gestures.
+     *
+     * Enters selection mode and selects the long-pressed pass.
+     * This is the primary way to initiate multi-selection for journey creation.
+     *
+     * @param passId The ID of the long-pressed pass
+     */
     fun onPassLongClick(passId: String) {
         val currentState = _uiState.value
         if (currentState is TimelineUiState.Success) {
@@ -174,6 +216,12 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Clears all selected passes and exits selection mode.
+     *
+     * Typically called when the user cancels journey creation or
+     * completes the journey creation flow.
+     */
     fun clearSelection() {
         val currentState = _uiState.value
         if (currentState is TimelineUiState.Success) {
@@ -184,6 +232,11 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Returns the list of currently selected pass IDs.
+     *
+     * @return List of pass IDs, empty if no passes are selected
+     */
     fun getSelectedPasses(): List<String> {
         val currentState = _uiState.value
         return if (currentState is TimelineUiState.Success) {
@@ -193,12 +246,25 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Triggers navigation to the journey list screen.
+     *
+     * Sends a navigation event that the UI layer handles.
+     */
     fun navigateToJourneys() {
         viewModelScope.launch {
             _events.send(TimelineEvent.NavigateToJourneyList)
         }
     }
 
+    /**
+     * Creates a new journey with the given name from currently selected passes.
+     *
+     * Validates that at least one pass is selected before creating the journey.
+     * On success, clears selection and navigates to the new journey detail screen.
+     *
+     * @param name The name for the new journey (must be unique)
+     */
     fun createJourney(name: String) {
         viewModelScope.launch {
             val selectedPassIds = getSelectedPasses()

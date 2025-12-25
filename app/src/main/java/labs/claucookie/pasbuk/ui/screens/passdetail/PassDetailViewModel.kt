@@ -15,6 +15,16 @@ import labs.claucookie.pasbuk.domain.usecase.GetPassDetailUseCase
 import labs.claucookie.pasbuk.ui.navigation.Screen
 import javax.inject.Inject
 
+/**
+ * ViewModel for the Pass Detail screen.
+ *
+ * Manages the state and user interactions for viewing a single pass, including:
+ * - Loading and displaying pass details and metadata
+ * - Handling pass deletion with confirmation
+ * - Error handling and retry functionality
+ *
+ * The pass ID is extracted from navigation arguments via SavedStateHandle.
+ */
 @HiltViewModel
 class PassDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -52,6 +62,12 @@ class PassDetailViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Handles the delete button click.
+     *
+     * Deletes the pass and its associated files. On success, shows a confirmation
+     * message and navigates back to the timeline. On failure, shows an error message.
+     */
     fun onDeleteClick() {
         viewModelScope.launch {
             val result = deletePassUseCase(passId)
@@ -71,12 +87,23 @@ class PassDetailViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Handles the back button click.
+     *
+     * Triggers navigation back to the previous screen (typically the timeline).
+     */
     fun onBackClick() {
         viewModelScope.launch {
             _events.send(PassDetailEvent.NavigateBack)
         }
     }
 
+    /**
+     * Retries loading the pass details.
+     *
+     * Called when the user taps a retry button after a load failure.
+     * Resets the state to loading and attempts to fetch the pass again.
+     */
     fun retry() {
         loadPass()
     }
