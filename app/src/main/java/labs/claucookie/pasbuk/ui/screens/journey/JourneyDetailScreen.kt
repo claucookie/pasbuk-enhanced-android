@@ -1,5 +1,6 @@
 package labs.claucookie.pasbuk.ui.screens.journey
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -195,10 +196,10 @@ fun JourneyDetailScreen(
                                 ) { pass ->
                                     PassCard(
                                         pass = pass,
-                                        onClick = { onPassClick(pass.id) },
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(bottom = 8.dp)
+                                            .clickable { onPassClick(pass.id) }
                                     )
                                 }
                             }

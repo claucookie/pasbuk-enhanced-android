@@ -1,7 +1,6 @@
 package labs.claucookie.pasbuk.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,14 +49,12 @@ import java.time.format.FormatStyle
  * Card composable displaying a pass summary.
  *
  * @param pass The pass to display
- * @param onClick Callback when the card is clicked
- * @param modifier Modifier for the composable
+ * @param modifier Modifier for the composable (caller should apply clickable/combinedClickable)
  * @param isSelected Whether this card is currently selected (for multi-select mode)
  */
 @Composable
 fun PassCard(
     pass: Pass,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false
 ) {
@@ -66,8 +63,7 @@ fun PassCard(
 
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
@@ -264,8 +260,7 @@ private fun PassCardPreview() {
                     fields = emptyMap(),
                     createdAt = Instant.now(),
                     modifiedAt = Instant.now()
-                ),
-                onClick = {}
+                )
             )
         }
     }
@@ -303,7 +298,6 @@ private fun PassCardBoardingPassPreview() {
                     createdAt = Instant.now(),
                     modifiedAt = Instant.now()
                 ),
-                onClick = {},
                 isSelected = true
             )
         }

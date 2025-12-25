@@ -290,7 +290,7 @@
 
 ### Documentation
 
-- [ ] T121 [P] Update README.md with feature overview and screenshots
+- [x] T121 [P] Update README.md with feature overview and screenshots
 - [ ] T122 [P] Create sample .pkpass files for testing in `app/src/androidTest/assets/`
 - [ ] T123 [P] Document Room database schema export
 
