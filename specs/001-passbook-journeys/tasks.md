@@ -285,8 +285,8 @@
 
 - [x] T117 [P] Run lint checks and fix all errors: `./gradlew lint`
 - [x] T118 [P] Verify test coverage meets 70%+ target: `./gradlew testDebugUnitTestCoverage`
-- [ ] T119 [P] Code review for Kotlin conventions adherence
-- [ ] T120 [P] Add KDoc comments to public APIs
+- [x] T119 [P] Code review for Kotlin conventions adherence
+- [x] T120 [P] Add KDoc comments to public APIs
 
 ### Documentation
 
