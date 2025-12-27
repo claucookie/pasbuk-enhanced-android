@@ -378,47 +378,55 @@ private fun PagedTimelineContent(
     onPassClick: (String) -> Unit,
     onPassLongClick: (String) -> Unit
 ) {
+    // Group passes by time period
+    val groupedPasses = mutableMapOf<String, MutableList<Pass>>()
+    val now = java.time.Instant.now()
+
+    for (index in 0 until pagedPasses.itemCount) {
+        val pass = pagedPasses[index] ?: continue
+        val section = getTimeSection(pass.relevantDate, now)
+        groupedPasses.getOrPut(section) { mutableListOf() }.add(pass)
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            top = 8.dp,
+            start = 16.dp,
+            end = 16.dp,
+            top = 16.dp,
             bottom = 88.dp // Extra space for FAB
         )
     ) {
-        items(
-            count = pagedPasses.itemCount,
-            key = { index -> pagedPasses[index]?.id ?: index }
-        ) { index ->
-            val pass = pagedPasses[index]
-            val previousPass = if (index > 0) pagedPasses[index - 1] else null
+        // Define section order
+        val sectionOrder = listOf("Upcoming", "Today", "Yesterday", "Past")
 
-            if (pass != null) {
-                // Show day header when date changes
-                val showDayHeader = shouldShowDayHeader(pass, previousPass)
-
-                if (showDayHeader) {
-                    pass.relevantDate?.let { date ->
-                        TimelineDayHeader(
-                            date = date,
-                            modifier = Modifier.padding(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = if (index == 0) 8.dp else 24.dp,
-                                bottom = 16.dp
-                            )
-                        )
-                    }
+        sectionOrder.forEach { section ->
+            val passes = groupedPasses[section]
+            if (!passes.isNullOrEmpty()) {
+                // Section header
+                item(key = "header_$section") {
+                    Text(
+                        text = section,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        color = androidx.compose.ui.graphics.Color.White,
+                        modifier = Modifier.padding(bottom = 16.dp, top = if (section != "Upcoming") 24.dp else 0.dp)
+                    )
                 }
 
-                TimelinePassItem(
-                    pass = pass,
-                    isFirst = index == 0 && !showDayHeader,
-                    isLast = index == pagedPasses.itemCount - 1,
-                    isSelected = selectedPassIds.contains(pass.id),
-                    onClick = { onPassClick(pass.id) },
-                    onLongClick = { onPassLongClick(pass.id) },
-                    modifier = Modifier.padding(bottom = if (index < pagedPasses.itemCount - 1) 0.dp else 0.dp)
-                )
+                // Passes in this section
+                items(
+                    items = passes,
+                    key = { it.id }
+                ) { pass ->
+                    CompactPassCard(
+                        pass = pass,
+                        isSelected = selectedPassIds.contains(pass.id),
+                        onClick = { onPassClick(pass.id) },
+                        onLongClick = { onPassLongClick(pass.id) },
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                }
             }
         }
 
@@ -457,6 +465,266 @@ private fun PagedTimelineContent(
 }
 
 // Timeline helper functions and components
+
+private fun getTimeSection(passDate: java.time.Instant?, now: java.time.Instant): String {
+    if (passDate == null) return "Past"
+
+    val passLocalDate = passDate.atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+    val nowLocalDate = now.atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+
+    return when {
+        passLocalDate.isAfter(nowLocalDate) -> "Upcoming"
+        passLocalDate.isEqual(nowLocalDate) -> "Today"
+        passLocalDate.isEqual(nowLocalDate.minusDays(1)) -> "Yesterday"
+        else -> "Past"
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun CompactPassCard(
+    pass: Pass,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val accentColor = getAccentColorForPass(pass)
+
+    androidx.compose.material3.Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+        shape = RoundedCornerShape(16.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(
+            containerColor = androidx.compose.ui.graphics.Color(0xFF1E2530)
+        ),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(
+            defaultElevation = if (isSelected) 8.dp else 2.dp
+        )
+    ) {
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
+        ) {
+            // Left accent bar
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .height(120.dp)
+                    .background(accentColor)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Icon/Logo
+            Box(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .size(56.dp)
+                    .clip(if (pass.logoImagePath != null || pass.iconImagePath != null) RoundedCornerShape(12.dp) else CircleShape)
+                    .background(accentColor.copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                val logoPath = pass.logoImagePath ?: pass.iconImagePath
+                if (logoPath != null && java.io.File(logoPath).exists()) {
+                    coil.compose.AsyncImage(
+                        model = java.io.File(logoPath),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                    )
+                } else {
+                    Icon(
+                        imageVector = getIconForPassType(pass.passType),
+                        contentDescription = null,
+                        tint = accentColor,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Pass details
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(top = 16.dp, bottom = 16.dp)
+            ) {
+                // Organization name
+                Text(
+                    text = pass.organizationName.uppercase(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = androidx.compose.ui.graphics.Color(0xFF7B8794),
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Main description
+                Text(
+                    text = pass.description,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                    color = androidx.compose.ui.graphics.Color.White,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Additional details
+                pass.fields.values.take(2).let { fields ->
+                    if (fields.isNotEmpty()) {
+                        Text(
+                            text = fields.joinToString(" • ") { "${it.label} ${it.value}" },
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = androidx.compose.ui.graphics.Color(0xFF7B8794),
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+
+            // Right side: status and time
+            Column(
+                modifier = Modifier.padding(top = 16.dp, end = 16.dp, bottom = 16.dp),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Status badge or selection indicator
+                if (isSelected) {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "✓",
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                } else {
+                    getPassStatus(pass)?.let { status ->
+                        PassStatusBadge(status)
+                    }
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                // Time
+                pass.relevantDate?.let { date ->
+                    val timeText = getTimeText(date)
+                    Column(horizontalAlignment = Alignment.End) {
+                        timeText.label?.let { label ->
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = androidx.compose.ui.graphics.Color(0xFF7B8794)
+                            )
+                        }
+                        Text(
+                            text = timeText.time,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                            color = androidx.compose.ui.graphics.Color(0xFF4A9EFF)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PassStatusBadge(status: String) {
+    val (backgroundColor, textColor) = when (status) {
+        "On Time" -> androidx.compose.ui.graphics.Color(0xFF1E4620) to androidx.compose.ui.graphics.Color(0xFF4CAF50)
+        "Delayed" -> androidx.compose.ui.graphics.Color(0xFF4A2020) to androidx.compose.ui.graphics.Color(0xFFE74856)
+        "Used" -> androidx.compose.ui.graphics.Color(0xFF3A3A3A) to androidx.compose.ui.graphics.Color(0xFF9E9E9E)
+        "Empty" -> androidx.compose.ui.graphics.Color(0xFF3A3A3A) to androidx.compose.ui.graphics.Color(0xFF9E9E9E)
+        else -> androidx.compose.ui.graphics.Color(0xFF2C3646) to androidx.compose.ui.graphics.Color(0xFFB0B8C3)
+    }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(backgroundColor)
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text = status,
+            style = MaterialTheme.typography.labelMedium,
+            color = textColor,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+        )
+    }
+}
+
+private data class TimeText(val label: String?, val time: String)
+
+private fun getTimeText(date: java.time.Instant): TimeText {
+    val zonedDate = date.atZone(java.time.ZoneId.systemDefault())
+    val now = java.time.Instant.now().atZone(java.time.ZoneId.systemDefault())
+    val passLocalDate = zonedDate.toLocalDate()
+    val nowLocalDate = now.toLocalDate()
+
+    val timeFormatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm")
+    val time = zonedDate.format(timeFormatter)
+
+    val label = when {
+        passLocalDate.isAfter(nowLocalDate.plusDays(1)) -> {
+            val monthDay = java.time.format.DateTimeFormatter.ofPattern("MMM d")
+            zonedDate.format(monthDay)
+        }
+        passLocalDate.isAfter(nowLocalDate) -> "Tomorrow"
+        passLocalDate.isEqual(nowLocalDate) -> "Departs"
+        else -> null
+    }
+
+    return TimeText(label, time)
+}
+
+private fun getPassStatus(pass: Pass): String? {
+    val now = java.time.Instant.now()
+
+    // Check if pass is expired or used
+    pass.expirationDate?.let { expDate ->
+        if (now.isAfter(expDate)) return "Used"
+    }
+
+    // Check relevance to current time
+    pass.relevantDate?.let { relevantDate ->
+        val zonedDate = relevantDate.atZone(java.time.ZoneId.systemDefault())
+        val nowZoned = now.atZone(java.time.ZoneId.systemDefault())
+
+        // If it's today and within reasonable time window, show "On Time"
+        if (zonedDate.toLocalDate().isEqual(nowZoned.toLocalDate())) {
+            val hoursDiff = java.time.Duration.between(nowZoned, zonedDate).toHours()
+            if (hoursDiff in 0..24) {
+                return "On Time"
+            }
+        }
+    }
+
+    // Check for specific pass types
+    return when (pass.passType) {
+        PassType.COUPON, PassType.STORE_CARD -> {
+            // Could check if there's a balance or value
+            null
+        }
+        else -> null
+    }
+}
 
 private fun shouldShowDayHeader(pass: Pass, previousPass: Pass?): Boolean {
     if (previousPass == null) return pass.relevantDate != null
