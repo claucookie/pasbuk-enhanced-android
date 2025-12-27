@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,6 +63,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassDetailScreen(
     onNavigateBack: () -> Unit,
@@ -95,10 +97,14 @@ fun PassDetailScreen(
         )
     }
 
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             PassDetailTopBar(
+                scrollBehavior = scrollBehavior,
                 onBackClick = onNavigateBack,
                 onDeleteClick = { showDeleteDialog = true }
             )
@@ -132,6 +138,7 @@ fun PassDetailScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PassDetailTopBar(
+    scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior,
     onBackClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
@@ -153,8 +160,10 @@ private fun PassDetailTopBar(
                 )
             }
         },
+        scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
+            scrolledContainerColor = MaterialTheme.colorScheme.surface
         )
     )
 }

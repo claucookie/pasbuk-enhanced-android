@@ -47,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,6 +58,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.ui.components.PassCard
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimelineScreen(
     onNavigateToPassDetail: (String) -> Unit,
@@ -108,11 +110,15 @@ fun TimelineScreen(
         )
     }
 
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TimelineTopBar(
                 uiState = uiState,
+                scrollBehavior = scrollBehavior,
                 onClearSelection = viewModel::clearSelection,
                 onNavigateToJourneys = onNavigateToJourneys,
                 onCreateJourney = { showJourneyDialog = true }
@@ -182,6 +188,7 @@ fun TimelineScreen(
 @Composable
 private fun TimelineTopBar(
     uiState: TimelineUiState,
+    scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior,
     onClearSelection: () -> Unit,
     onNavigateToJourneys: () -> Unit,
     onCreateJourney: () -> Unit
@@ -224,8 +231,10 @@ private fun TimelineTopBar(
                 }
             }
         },
+        scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
+            scrolledContainerColor = MaterialTheme.colorScheme.surface
         )
     )
 }
