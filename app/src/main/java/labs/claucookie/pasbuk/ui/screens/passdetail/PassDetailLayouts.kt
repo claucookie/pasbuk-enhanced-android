@@ -14,7 +14,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DirectionsBus
+import androidx.compose.material.icons.filled.DirectionsBoat
 import androidx.compose.material.icons.filled.Flight
+import androidx.compose.material.icons.filled.Train
+import androidx.compose.material.icons.filled.TripOrigin
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -28,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,12 +47,61 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 /**
+ * Transit type for boarding passes
+ */
+private enum class TransitType(val label: String, val icon: ImageVector) {
+    AIR("FLIGHT", Icons.Default.Flight),
+    BOAT("FERRY", Icons.Default.DirectionsBoat),
+    BUS("BUS", Icons.Default.DirectionsBus),
+    TRAIN("TRAIN", Icons.Default.Train),
+    GENERIC("TRANSIT", Icons.Default.TripOrigin)
+}
+
+/**
+ * Determines the transit type from pass fields and organization name
+ */
+private fun getTransitType(pass: Pass): TransitType {
+    // Check for specific transit type field
+    pass.fields["transitType"]?.value?.let { transitType ->
+        return when (transitType.uppercase()) {
+            "PKTRANSITTYPEAIR", "AIR", "FLIGHT" -> TransitType.AIR
+            "PKTRANSITTYPEBOAT", "BOAT", "FERRY" -> TransitType.BOAT
+            "PKTRANSITTYPEBUS", "BUS" -> TransitType.BUS
+            "PKTRANSITTYPETRAIN", "TRAIN", "RAIL" -> TransitType.TRAIN
+            "PKTRANSITTYPEGENERIC", "GENERIC" -> TransitType.GENERIC
+            else -> TransitType.AIR
+        }
+    }
+
+    // Check for field keys
+    return when {
+        pass.fields.containsKey("flightNumber") || pass.fields.containsKey("flight") -> TransitType.AIR
+        pass.fields.containsKey("trainNumber") || pass.fields.containsKey("train") -> TransitType.TRAIN
+        pass.fields.containsKey("busNumber") || pass.fields.containsKey("bus") -> TransitType.BUS
+        pass.fields.containsKey("ferryNumber") || pass.fields.containsKey("boat") -> TransitType.BOAT
+        else -> {
+            // Check organization name
+            val orgName = pass.organizationName.uppercase()
+            when {
+                orgName.contains("AIR") || orgName.contains("FLIGHT") -> TransitType.AIR
+                orgName.contains("RAIL") || orgName.contains("TRAIN") -> TransitType.TRAIN
+                orgName.contains("BUS") || orgName.contains("COACH") -> TransitType.BUS
+                orgName.contains("FERRY") || orgName.contains("BOAT") || orgName.contains("CRUISE") -> TransitType.BOAT
+                else -> TransitType.GENERIC
+            }
+        }
+    }
+}
+
+/**
  * Boarding Pass specific layout with route display and departure info
  */
 @Composable
 fun BoardingPassLayout(pass: Pass, modifier: Modifier = Modifier) {
+    val transitType = getTransitType(pass)
+
     Column(modifier = modifier) {
-        // Header with airline and flight info
+        // Header with operator and trip info
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -61,8 +115,13 @@ fun BoardingPassLayout(pass: Pass, modifier: Modifier = Modifier) {
                     style = MaterialTheme.typography.labelMedium,
                     color = Color(0xFF7B8794)
                 )
+                val tripNumber = pass.fields["flightNumber"]?.value
+                    ?: pass.fields["trainNumber"]?.value
+                    ?: pass.fields["busNumber"]?.value
+                    ?: pass.fields["ferryNumber"]?.value
+                    ?: ""
                 Text(
-                    text = "FLIGHT ${pass.fields["flightNumber"]?.value ?: ""}",
+                    text = "${transitType.label} $tripNumber",
                     style = MaterialTheme.typography.labelLarge,
                     color = Color(0xFF4A9EFF)
                 )
@@ -70,12 +129,12 @@ fun BoardingPassLayout(pass: Pass, modifier: Modifier = Modifier) {
         }
 
         // Route display
-        BoardingPassRoute(pass)
+        BoardingPassRoute(pass, transitType)
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Terminal, Gate, Seat info
-        BoardingPassInfo(pass)
+        // Transit-specific info (terminal, gate, platform, seat, etc.)
+        BoardingPassInfo(pass, transitType)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -136,78 +195,137 @@ fun BoardingPassLayout(pass: Pass, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun BoardingPassRoute(pass: Pass) {
+private fun BoardingPassRoute(pass: Pass, transitType: TransitType) {
+    // Extract departure and arrival times
+    val departureTime = pass.fields["departureTime"]?.value
+        ?: pass.fields["boardingTime"]?.value
+        ?: formatEventTime(pass.relevantDate)
+    val arrivalTime = pass.fields["arrivalTime"]?.value ?: ""
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 32.dp),
+            .padding(horizontal = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Origin
-        Column(horizontalAlignment = Alignment.Start) {
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier.weight(1f)
+        ) {
             Text(
-                text = pass.fields["origin"]?.value ?: "LHR",
-                style = MaterialTheme.typography.displaySmall,
+                text = pass.fields["origin"]?.value ?: pass.fields["from"]?.value ?: "---",
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = Color.White,
+                maxLines = 1
             )
-            Text(
-                text = "10:40 AM",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color(0xFFB0B8C3)
-            )
+            if (departureTime.isNotBlank()) {
+                Text(
+                    text = departureTime,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFFB0B8C3)
+                )
+            }
         }
 
-        // Flight icon
+        // Transit icon
         Icon(
-            imageVector = Icons.Default.Flight,
-            contentDescription = null,
+            imageVector = transitType.icon,
+            contentDescription = transitType.label,
             tint = Color(0xFF4A9EFF),
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier
+                .size(28.dp)
+                .padding(horizontal = 8.dp)
         )
 
         // Destination
-        Column(horizontalAlignment = Alignment.End) {
+        Column(
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier.weight(1f)
+        ) {
             Text(
-                text = pass.fields["destination"]?.value ?: "JFK",
-                style = MaterialTheme.typography.displaySmall,
+                text = pass.fields["destination"]?.value ?: pass.fields["to"]?.value ?: "---",
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = Color.White,
+                textAlign = TextAlign.End,
+                maxLines = 1
             )
-            Text(
-                text = "01:25 PM",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color(0xFFB0B8C3)
-            )
+            if (arrivalTime.isNotBlank()) {
+                Text(
+                    text = arrivalTime,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFFB0B8C3)
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun BoardingPassInfo(pass: Pass) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        InfoBox(
-            label = "TERMINAL",
-            value = pass.fields["terminal"]?.value ?: "5",
-            modifier = Modifier.weight(1f)
-        )
-        InfoBox(
-            label = "GATE",
-            value = pass.fields["gate"]?.value ?: "A10",
-            modifier = Modifier.weight(1f),
-            highlighted = true
-        )
-        InfoBox(
-            label = "SEAT",
-            value = pass.fields["seat"]?.value ?: "42A",
-            modifier = Modifier.weight(1f)
-        )
+private fun BoardingPassInfo(pass: Pass, transitType: TransitType) {
+    // Collect available info boxes
+    val infoBoxes = mutableListOf<Triple<String, String, Boolean>>()
+
+    // Terminal (mainly for air travel)
+    pass.fields["terminal"]?.value?.let { terminal ->
+        infoBoxes.add(Triple("TERMINAL", terminal, false))
+    }
+
+    // Platform (for trains)
+    pass.fields["platform"]?.value?.let { platform ->
+        infoBoxes.add(Triple("PLATFORM", platform, false))
+    }
+
+    // Gate (for air travel and some bus/train stations)
+    pass.fields["gate"]?.value?.let { gate ->
+        infoBoxes.add(Triple("GATE", gate, true))
+    }
+
+    // Bay/Dock (for buses and ferries)
+    pass.fields["bay"]?.value?.let { bay ->
+        infoBoxes.add(Triple("BAY", bay, true))
+    }
+    pass.fields["dock"]?.value?.let { dock ->
+        infoBoxes.add(Triple("DOCK", dock, true))
+    }
+
+    // Seat
+    pass.fields["seat"]?.value?.let { seat ->
+        infoBoxes.add(Triple("SEAT", seat, false))
+    }
+
+    // Coach/Car (for trains)
+    pass.fields["coach"]?.value?.let { coach ->
+        infoBoxes.add(Triple("COACH", coach, false))
+    }
+    pass.fields["car"]?.value?.let { car ->
+        infoBoxes.add(Triple("CAR", car, false))
+    }
+
+    // Only show if we have at least one info box
+    if (infoBoxes.isNotEmpty()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            infoBoxes.take(3).forEach { (label, value, highlighted) ->
+                InfoBox(
+                    label = label,
+                    value = value,
+                    modifier = Modifier.weight(1f),
+                    highlighted = highlighted
+                )
+            }
+            // Fill empty spaces if less than 3 boxes
+            repeat(3 - infoBoxes.size) {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
     }
 }
 
@@ -222,20 +340,22 @@ private fun InfoBox(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(if (highlighted) Color(0xFF4A9EFF) else Color(0xFF2C3646))
-            .padding(12.dp),
+            .padding(vertical = 12.dp, horizontal = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = if (highlighted) Color.White.copy(alpha = 0.8f) else Color(0xFF7B8794)
+            color = if (highlighted) Color.White.copy(alpha = 0.8f) else Color(0xFF7B8794),
+            maxLines = 1
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = value,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = Color.White,
+            maxLines = 1
         )
     }
 }
