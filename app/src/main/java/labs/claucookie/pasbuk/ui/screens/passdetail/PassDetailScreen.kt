@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,6 +63,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassDetailScreen(
     onNavigateBack: () -> Unit,
@@ -95,10 +97,14 @@ fun PassDetailScreen(
         )
     }
 
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             PassDetailTopBar(
+                scrollBehavior = scrollBehavior,
                 onBackClick = onNavigateBack,
                 onDeleteClick = { showDeleteDialog = true }
             )
@@ -132,6 +138,7 @@ fun PassDetailScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PassDetailTopBar(
+    scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior,
     onBackClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
@@ -153,8 +160,10 @@ private fun PassDetailTopBar(
                 )
             }
         },
+        scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
+            scrolledContainerColor = MaterialTheme.colorScheme.surface
         )
     )
 }
@@ -196,127 +205,30 @@ private fun ErrorContent(
 
 @Composable
 private fun PassDetailContent(pass: Pass) {
-    val backgroundColor = parsePassColor(pass.backgroundColor) ?: MaterialTheme.colorScheme.primaryContainer
-    val foregroundColor = parsePassColor(pass.foregroundColor) ?: MaterialTheme.colorScheme.onPrimaryContainer
-    val labelColor = parsePassColor(pass.labelColor) ?: foregroundColor.copy(alpha = 0.7f)
-
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFF1A1F2E))
             .verticalScroll(rememberScrollState())
     ) {
-        // Pass Header Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = backgroundColor),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            ) {
-                // Header with logo and organization
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    pass.logoImagePath?.let { logoPath ->
-                        if (File(logoPath).exists()) {
-                            AsyncImage(
-                                model = File(logoPath),
-                                contentDescription = "Logo",
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(RoundedCornerShape(8.dp)),
-                                contentScale = ContentScale.Fit
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                        }
-                    }
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = pass.organizationName,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = labelColor
-                        )
-                        pass.logoText?.let { logoText ->
-                            Text(
-                                text = logoText,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = foregroundColor,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Strip image if present
-                pass.stripImagePath?.let { stripPath ->
-                    if (File(stripPath).exists()) {
-                        AsyncImage(
-                            model = File(stripPath),
-                            contentDescription = "Strip image",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(100.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                }
-
-                // Description
-                Text(
-                    text = pass.description,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = foregroundColor,
-                    fontWeight = FontWeight.Bold
-                )
-
-                // Relevant date
-                pass.relevantDate?.let { date ->
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = formatDateTime(date),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = foregroundColor.copy(alpha = 0.9f)
-                    )
-                }
-
-                // Barcode
-                pass.barcode?.let { barcode ->
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        BarcodeDisplay(
-                            barcode = barcode,
-                            size = 180.dp,
-                            showAltText = true
-                        )
-                    }
-                }
+        // Use type-specific layout based on PassType
+        when (pass.passType) {
+            labs.claucookie.pasbuk.domain.model.PassType.BOARDING_PASS -> {
+                BoardingPassLayout(pass = pass)
+            }
+            labs.claucookie.pasbuk.domain.model.PassType.EVENT_TICKET -> {
+                EventTicketLayout(pass = pass)
+            }
+            labs.claucookie.pasbuk.domain.model.PassType.COUPON -> {
+                CouponLayout(pass = pass)
+            }
+            labs.claucookie.pasbuk.domain.model.PassType.STORE_CARD -> {
+                StoreCardLayout(pass = pass)
+            }
+            labs.claucookie.pasbuk.domain.model.PassType.GENERIC -> {
+                GenericPassLayout(pass = pass)
             }
         }
-
-        // Pass Fields
-        if (pass.fields.isNotEmpty()) {
-            PassFieldsSection(
-                fields = pass.fields,
-                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                valueColor = MaterialTheme.colorScheme.onSurface
-            )
-        }
-
-        // Pass Info Section
-        PassInfoSection(pass = pass)
 
         Spacer(modifier = Modifier.height(32.dp))
     }
