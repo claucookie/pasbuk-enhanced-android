@@ -1,5 +1,6 @@
 package labs.claucookie.pasbuk.ui.screens.journey
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -150,7 +151,13 @@ fun JourneyListScreen(
                         // Journey list
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp)
+                            contentPadding = PaddingValues(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 16.dp,
+                                bottom = 16.dp
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             items(
                                 items = uiState.journeys,
@@ -158,10 +165,7 @@ fun JourneyListScreen(
                             ) { journey ->
                                 JourneyCard(
                                     journey = journey,
-                                    onClick = { onJourneyClick(journey.id) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 8.dp)
+                                    onClick = { onJourneyClick(journey.id) }
                                 )
                             }
                         }
