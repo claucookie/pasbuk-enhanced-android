@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import labs.claucookie.pasbuk.domain.model.ActivitySuggestion
 import labs.claucookie.pasbuk.domain.model.Pass
 import labs.claucookie.pasbuk.domain.model.PassType
 import java.time.Instant
@@ -44,12 +45,14 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 /**
- * Timeline view for journey passes grouped by day
+ * Timeline view for journey passes grouped by day with AI suggestions
  */
 @Composable
 fun JourneyTimeline(
     passes: List<Pass>,
+    suggestions: List<ActivitySuggestion> = emptyList(),
     onPassClick: (String) -> Unit,
+    onSuggestionDismiss: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val passesByDay = passes.groupByDay()
@@ -62,8 +65,25 @@ fun JourneyTimeline(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = if (dayIndex == 0) 8.dp else 24.dp, bottom = 16.dp)
             )
 
-            // Passes for this day
+            // Passes and suggestions for this day
             dayPasses.forEachIndexed { passIndex, pass ->
+                // Calculate global pass index (across all days)
+                val globalPassIndex = passesByDay
+                    .take(dayIndex)
+                    .sumOf { it.second.size } + passIndex
+
+                // Render suggestion BEFORE this pass (if any)
+                val suggestionBefore = suggestions.find { it.positionIndex == globalPassIndex + 1 }
+                if (suggestionBefore != null) {
+                    TimelineSuggestionItem(
+                        suggestion = suggestionBefore,
+                        isFirst = false,
+                        isLast = false,
+                        onDismiss = onSuggestionDismiss
+                    )
+                }
+
+                // Render pass
                 TimelinePassItem(
                     pass = pass,
                     isFirst = dayIndex == 0 && passIndex == 0,
@@ -71,6 +91,20 @@ fun JourneyTimeline(
                     onClick = { onPassClick(pass.id) },
                     modifier = Modifier.padding(bottom = if (passIndex < dayPasses.lastIndex) 0.dp else 0.dp)
                 )
+            }
+
+            // Render suggestion AFTER last pass in this day (if this is the last day)
+            if (dayIndex == passesByDay.lastIndex) {
+                val globalEndIndex = passesByDay.sumOf { it.second.size }
+                val suggestionAfter = suggestions.find { it.positionIndex == globalEndIndex + 1 }
+                if (suggestionAfter != null) {
+                    TimelineSuggestionItem(
+                        suggestion = suggestionAfter,
+                        isFirst = false,
+                        isLast = true,
+                        onDismiss = onSuggestionDismiss
+                    )
+                }
             }
         }
 
