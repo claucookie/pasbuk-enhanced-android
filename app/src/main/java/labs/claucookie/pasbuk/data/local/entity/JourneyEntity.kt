@@ -11,6 +11,7 @@ import androidx.room.PrimaryKey
 data class JourneyEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
+    val suggestionsJson: String? = null,
     val createdAt: Long,
     val modifiedAt: Long
 )
