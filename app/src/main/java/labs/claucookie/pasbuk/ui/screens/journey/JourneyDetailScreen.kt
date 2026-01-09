@@ -188,7 +188,11 @@ fun JourneyDetailScreen(
                             item {
                                 JourneyTimeline(
                                     passes = journey.passes,
-                                    onPassClick = onPassClick
+                                    suggestions = journey.activeSuggestions,
+                                    onPassClick = onPassClick,
+                                    onSuggestionDismiss = { suggestionId ->
+                                        viewModel.dismissSuggestion(suggestionId)
+                                    }
                                 )
                             }
                         }

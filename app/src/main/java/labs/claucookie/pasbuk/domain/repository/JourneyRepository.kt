@@ -1,6 +1,7 @@
 package labs.claucookie.pasbuk.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import labs.claucookie.pasbuk.domain.model.ActivitySuggestion
 import labs.claucookie.pasbuk.domain.model.Journey
 
 /**
@@ -52,4 +53,15 @@ interface JourneyRepository {
      * @param id The unique identifier of the journey to delete
      */
     suspend fun deleteJourney(id: Long)
+
+    /**
+     * Updates suggestions for an existing journey.
+     *
+     * Replaces the existing suggestions with the new list.
+     *
+     * @param journeyId The ID of the journey to update
+     * @param suggestions New list of suggestions (replaces existing)
+     * @throws IllegalArgumentException if journey not found
+     */
+    suspend fun updateSuggestions(journeyId: Long, suggestions: List<ActivitySuggestion>)
 }

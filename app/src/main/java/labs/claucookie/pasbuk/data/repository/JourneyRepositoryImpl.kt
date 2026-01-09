@@ -1,6 +1,7 @@
 package labs.claucookie.pasbuk.data.repository
 
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import labs.claucookie.pasbuk.data.local.dao.JourneyDao
@@ -8,6 +9,7 @@ import labs.claucookie.pasbuk.data.local.dao.PassDao
 import labs.claucookie.pasbuk.data.local.entity.JourneyPassCrossRef
 import labs.claucookie.pasbuk.data.mapper.createJourneyEntity
 import labs.claucookie.pasbuk.data.mapper.toDomain
+import labs.claucookie.pasbuk.domain.model.ActivitySuggestion
 import labs.claucookie.pasbuk.domain.model.Journey
 import labs.claucookie.pasbuk.domain.repository.DuplicateJourneyNameException
 import labs.claucookie.pasbuk.domain.repository.JourneyRepository
@@ -71,5 +73,32 @@ class JourneyRepositoryImpl @Inject constructor(
 
         // Delete journey
         journeyDao.delete(journeyEntity)
+    }
+
+    override suspend fun updateSuggestions(journeyId: Long, suggestions: List<ActivitySuggestion>) {
+        val journeyEntity = journeyDao.getById(journeyId)
+            ?: throw IllegalArgumentException("Journey with ID $journeyId not found")
+
+        // Serialize suggestions to JSON
+        val suggestionsJson = if (suggestions.isEmpty()) {
+            null
+        } else {
+            try {
+                val adapter = moshi.adapter<List<ActivitySuggestion>>(
+                    Types.newParameterizedType(List::class.java, ActivitySuggestion::class.java)
+                )
+                adapter.toJson(suggestions)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        // Update entity with new suggestions
+        val updatedEntity = journeyEntity.copy(
+            suggestionsJson = suggestionsJson,
+            modifiedAt = System.currentTimeMillis()
+        )
+
+        journeyDao.update(updatedEntity)
     }
 }
