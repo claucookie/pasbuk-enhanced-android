@@ -71,6 +71,7 @@ fun JourneyDetailScreen(
         onPassClick = onPassClick,
         onBackClick = onBackClick,
         onDeleteClick = { showDeleteDialog = true },
+        onSuggestionDismiss = { viewModel.dismissSuggestion(it) },
         modifier = modifier
     )
 }
@@ -85,6 +86,7 @@ fun JourneyDetailScreen(
     onPassClick: (String) -> Unit,
     onBackClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onSuggestionDismiss: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

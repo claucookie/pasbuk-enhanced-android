@@ -1,5 +1,6 @@
 package labs.claucookie.pasbuk.domain.usecase
 
+import android.util.Log
 import labs.claucookie.pasbuk.domain.repository.JourneyRepository
 import labs.claucookie.pasbuk.domain.service.GeminiSuggestionService
 import javax.inject.Inject
@@ -27,6 +28,7 @@ class GenerateJourneySuggestionsUseCase @Inject constructor(
      */
     suspend operator fun invoke(journeyId: Long): Result<Unit> {
         return try {
+            Log.d(TAG, "Starting suggestion generation for journey ID: $journeyId")
             // Fetch journey
             val journey = journeyRepository.getJourneyById(journeyId)
                 ?: return Result.failure(IllegalArgumentException("Journey not found"))
