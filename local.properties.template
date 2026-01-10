@@ -1,0 +1,10 @@
+## This file contains local configuration for the Android project
+## Copy this file to local.properties and fill in the values
+
+# Android SDK location
+sdk.dir=/path/to/your/Android/sdk
+
+# Gemini API Key for AI journey suggestions
+# Get your API key from: https://ai.google.dev/
+# Uncomment and add your key:
+# GEMINI_API_KEY=your_gemini_api_key_here
