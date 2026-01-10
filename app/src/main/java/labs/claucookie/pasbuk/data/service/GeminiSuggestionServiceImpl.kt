@@ -1,5 +1,6 @@
 package labs.claucookie.pasbuk.data.service
 
+import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.generationConfig
 import kotlinx.coroutines.Dispatchers
@@ -38,17 +39,32 @@ class GeminiSuggestionServiceImpl @Inject constructor() : GeminiSuggestionServic
     override suspend fun generateSuggestions(journey: Journey): Result<List<ActivitySuggestion>> {
         return withContext(Dispatchers.IO) {
             try {
+                Log.d(TAG, "Gemini API called for journey: ${journey.name}")
+
                 // Validate journey has at least 2 passes (to have gaps)
                 if (journey.passes.size < 2) {
+                    Log.d(TAG, "Journey has < 2 passes, returning empty list")
                     return@withContext Result.success(emptyList())
                 }
 
                 val prompt = buildPrompt(journey)
-                val response = model.generateContent(prompt)
+                Log.d(TAG, "Prompt built, sending to Gemini API...")
+                Log.v(TAG, "Prompt: $prompt")
 
-                val suggestions = parseResponse(response.text ?: "")
+                val response = model.generateContent(prompt)
+                val responseText = response.text ?: ""
+                Log.d(TAG, "Gemini API response received: ${responseText.length} chars")
+                Log.v(TAG, "Response: $responseText")
+
+                val suggestions = parseResponse(responseText)
+                Log.d(TAG, "Parsed ${suggestions.size} suggestions from response")
+                suggestions.forEachIndexed { index, suggestion ->
+                    Log.v(TAG, "Suggestion $index: positionIndex=${suggestion.positionIndex}, title='${suggestion.title}'")
+                }
+
                 Result.success(suggestions)
             } catch (e: Exception) {
+                Log.e(TAG, "Gemini API error: ${e.message}", e)
                 when {
                     e.message?.contains("429") == true -> {
                         Result.failure(
@@ -190,5 +206,9 @@ class GeminiSuggestionServiceImpl @Inject constructor() : GeminiSuggestionServic
                 coords
             }
         } ?: "No location"
+    }
+
+    companion object {
+        private const val TAG = "GeminiSuggestionService"
     }
 }
