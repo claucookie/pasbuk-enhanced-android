@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import labs.claucookie.pasbuk.data.local.converter.InstantAdapter
 import javax.inject.Singleton
 
 @Module
@@ -16,6 +17,7 @@ object MoshiModule {
     @Singleton
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
+            .add(InstantAdapter())
             .addLast(KotlinJsonAdapterFactory())
             .build()
     }
