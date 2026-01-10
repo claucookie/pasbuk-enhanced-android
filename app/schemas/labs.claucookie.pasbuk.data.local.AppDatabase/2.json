@@ -1,0 +1,302 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "d3089e9d8e01b4fadc85a3c8ba542170",
+    "entities": [
+      {
+        "tableName": "passes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `serialNumber` TEXT NOT NULL, `passTypeIdentifier` TEXT NOT NULL, `organizationName` TEXT NOT NULL, `description` TEXT NOT NULL, `teamIdentifier` TEXT NOT NULL, `relevantDate` INTEGER, `expirationDate` INTEGER, `locationsJson` TEXT, `barcodeJson` TEXT, `fieldsJson` TEXT, `logoText` TEXT, `backgroundColor` TEXT, `foregroundColor` TEXT, `labelColor` TEXT, `logoImagePath` TEXT, `iconImagePath` TEXT, `thumbnailImagePath` TEXT, `stripImagePath` TEXT, `backgroundImagePath` TEXT, `originalPkpassPath` TEXT NOT NULL, `passType` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `modifiedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "passTypeIdentifier",
+            "columnName": "passTypeIdentifier",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "organizationName",
+            "columnName": "organizationName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "teamIdentifier",
+            "columnName": "teamIdentifier",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relevantDate",
+            "columnName": "relevantDate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "expirationDate",
+            "columnName": "expirationDate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "locationsJson",
+            "columnName": "locationsJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "barcodeJson",
+            "columnName": "barcodeJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fieldsJson",
+            "columnName": "fieldsJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "logoText",
+            "columnName": "logoText",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "backgroundColor",
+            "columnName": "backgroundColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "foregroundColor",
+            "columnName": "foregroundColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "labelColor",
+            "columnName": "labelColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "logoImagePath",
+            "columnName": "logoImagePath",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "iconImagePath",
+            "columnName": "iconImagePath",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "thumbnailImagePath",
+            "columnName": "thumbnailImagePath",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "stripImagePath",
+            "columnName": "stripImagePath",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "backgroundImagePath",
+            "columnName": "backgroundImagePath",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "originalPkpassPath",
+            "columnName": "originalPkpassPath",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "passType",
+            "columnName": "passType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAt",
+            "columnName": "modifiedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_passes_serialNumber",
+            "unique": true,
+            "columnNames": [
+              "serialNumber"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_passes_serialNumber` ON `${TABLE_NAME}` (`serialNumber`)"
+          },
+          {
+            "name": "index_passes_relevantDate",
+            "unique": false,
+            "columnNames": [
+              "relevantDate"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_passes_relevantDate` ON `${TABLE_NAME}` (`relevantDate`)"
+          }
+        ]
+      },
+      {
+        "tableName": "journeys",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `suggestionsJson` TEXT, `createdAt` INTEGER NOT NULL, `modifiedAt` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "suggestionsJson",
+            "columnName": "suggestionsJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAt",
+            "columnName": "modifiedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_journeys_name",
+            "unique": true,
+            "columnNames": [
+              "name"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_journeys_name` ON `${TABLE_NAME}` (`name`)"
+          }
+        ]
+      },
+      {
+        "tableName": "journey_pass_cross_ref",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`journeyId` INTEGER NOT NULL, `passId` TEXT NOT NULL, `sortOrder` INTEGER NOT NULL, PRIMARY KEY(`journeyId`, `passId`), FOREIGN KEY(`journeyId`) REFERENCES `journeys`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`passId`) REFERENCES `passes`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "journeyId",
+            "columnName": "journeyId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "passId",
+            "columnName": "passId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "journeyId",
+            "passId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_journey_pass_cross_ref_journeyId",
+            "unique": false,
+            "columnNames": [
+              "journeyId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_journey_pass_cross_ref_journeyId` ON `${TABLE_NAME}` (`journeyId`)"
+          },
+          {
+            "name": "index_journey_pass_cross_ref_passId",
+            "unique": false,
+            "columnNames": [
+              "passId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_journey_pass_cross_ref_passId` ON `${TABLE_NAME}` (`passId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "journeys",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "journeyId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "passes",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "passId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd3089e9d8e01b4fadc85a3c8ba542170')"
+    ]
+  }
+}

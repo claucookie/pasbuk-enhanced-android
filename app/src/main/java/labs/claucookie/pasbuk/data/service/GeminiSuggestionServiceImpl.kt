@@ -59,7 +59,7 @@ class GeminiSuggestionServiceImpl @Inject constructor() : GeminiSuggestionServic
                         Result.failure(GeminiApiException("Invalid API key", e))
                     }
                     e.message?.contains("RESOURCE_EXHAUSTED") == true -> {
-                        Result.failure(GeminiRateLimitException("API quota exceeded", ))
+                        Result.failure(GeminiRateLimitException("API quota exceeded"))
                     }
                     else -> {
                         Result.failure(
