@@ -67,7 +67,13 @@ class JourneyRepositoryImplTest {
             coEvery { passDao.getById(pass.id) } returns pass
         }
         coEvery { journeyDao.getJourneyWithPasses(journeyId) } returns JourneyWithPasses(
-            journey = JourneyEntity(journeyId, name, Instant.now().toEpochMilli(), Instant.now().toEpochMilli()),
+            journey = JourneyEntity(
+                id = journeyId,
+                name = name,
+                suggestionsJson = null,
+                createdAt = Instant.now().toEpochMilli(),
+                modifiedAt = Instant.now().toEpochMilli()
+            ),
             passes = passes
         )
 
@@ -88,7 +94,13 @@ class JourneyRepositoryImplTest {
         // Given
         val name = "Existing Journey"
         val passIds = listOf("pass-1")
-        val existingJourney = JourneyEntity(1L, name, Instant.now().toEpochMilli(), Instant.now().toEpochMilli())
+        val existingJourney = JourneyEntity(
+            id = 1L,
+            name = name,
+            suggestionsJson = null,
+            createdAt = Instant.now().toEpochMilli(),
+            modifiedAt = Instant.now().toEpochMilli()
+        )
 
         coEvery { journeyDao.getByName(name) } returns existingJourney
 
@@ -112,7 +124,13 @@ class JourneyRepositoryImplTest {
             coEvery { passDao.getById(pass.id) } returns pass
         }
         coEvery { journeyDao.getJourneyWithPasses(journeyId) } returns JourneyWithPasses(
-            journey = JourneyEntity(journeyId, name, Instant.now().toEpochMilli(), Instant.now().toEpochMilli()),
+            journey = JourneyEntity(
+                id = journeyId,
+                name = name,
+                suggestionsJson = null,
+                createdAt = Instant.now().toEpochMilli(),
+                modifiedAt = Instant.now().toEpochMilli()
+            ),
             passes = passes
         )
 
@@ -138,7 +156,13 @@ class JourneyRepositoryImplTest {
         val name = "Test Journey"
         val passes = listOf(createTestPassEntity("pass-1"), createTestPassEntity("pass-2"))
         val journeyWithPasses = JourneyWithPasses(
-            journey = JourneyEntity(journeyId, name, Instant.now().toEpochMilli(), Instant.now().toEpochMilli()),
+            journey = JourneyEntity(
+                id = journeyId,
+                name = name,
+                suggestionsJson = null,
+                createdAt = Instant.now().toEpochMilli(),
+                modifiedAt = Instant.now().toEpochMilli()
+            ),
             passes = passes
         )
 
@@ -172,11 +196,23 @@ class JourneyRepositoryImplTest {
         // Given
         val journeysWithPasses = listOf(
             JourneyWithPasses(
-                journey = JourneyEntity(1L, "Journey 1", Instant.now().toEpochMilli(), Instant.now().toEpochMilli()),
+                journey = JourneyEntity(
+                    id = 1L,
+                    name = "Journey 1",
+                    suggestionsJson = null,
+                    createdAt = Instant.now().toEpochMilli(),
+                    modifiedAt = Instant.now().toEpochMilli()
+                ),
                 passes = listOf(createTestPassEntity("pass-1"))
             ),
             JourneyWithPasses(
-                journey = JourneyEntity(2L, "Journey 2", Instant.now().toEpochMilli(), Instant.now().toEpochMilli()),
+                journey = JourneyEntity(
+                    id = 2L,
+                    name = "Journey 2",
+                    suggestionsJson = null,
+                    createdAt = Instant.now().toEpochMilli(),
+                    modifiedAt = Instant.now().toEpochMilli()
+                ),
                 passes = listOf(createTestPassEntity("pass-2"), createTestPassEntity("pass-3"))
             )
         )
@@ -210,7 +246,13 @@ class JourneyRepositoryImplTest {
     fun `deleteJourney deletes journey and cross references`() = runTest {
         // Given
         val journeyId = 1L
-        val journeyEntity = JourneyEntity(journeyId, "Test", Instant.now().toEpochMilli(), Instant.now().toEpochMilli())
+        val journeyEntity = JourneyEntity(
+            id = journeyId,
+            name = "Test",
+            suggestionsJson = null,
+            createdAt = Instant.now().toEpochMilli(),
+            modifiedAt = Instant.now().toEpochMilli()
+        )
 
         coEvery { journeyDao.getById(journeyId) } returns journeyEntity
 
@@ -230,7 +272,13 @@ class JourneyRepositoryImplTest {
         val newPass = createTestPassEntity("pass-2", now.minusSeconds(60 * 60))
 
         val journeyWithPasses = JourneyWithPasses(
-            journey = JourneyEntity(1L, "Sorted Journey", Instant.now().toEpochMilli(), Instant.now().toEpochMilli()),
+            journey = JourneyEntity(
+                id = 1L,
+                name = "Sorted Journey",
+                suggestionsJson = null,
+                createdAt = Instant.now().toEpochMilli(),
+                modifiedAt = Instant.now().toEpochMilli()
+            ),
             passes = listOf(newPass, oldPass) // Unsorted in DB
         )
 

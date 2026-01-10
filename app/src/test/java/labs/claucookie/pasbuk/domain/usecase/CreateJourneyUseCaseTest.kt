@@ -3,6 +3,8 @@ package labs.claucookie.pasbuk.domain.usecase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import labs.claucookie.pasbuk.domain.model.Journey
 import labs.claucookie.pasbuk.domain.model.PassType
@@ -28,12 +30,24 @@ import java.time.Instant
 class CreateJourneyUseCaseTest {
 
     private lateinit var journeyRepository: JourneyRepository
+    private lateinit var generateSuggestionsUseCase: GenerateJourneySuggestionsUseCase
+    private lateinit var testScope: CoroutineScope
     private lateinit var createJourneyUseCase: CreateJourneyUseCase
 
     @Before
     fun setup() {
         journeyRepository = mockk()
-        createJourneyUseCase = CreateJourneyUseCase(journeyRepository)
+        generateSuggestionsUseCase = mockk()
+        testScope = CoroutineScope(StandardTestDispatcher())
+
+        // Mock generateSuggestionsUseCase to return success (fire-and-forget, so it doesn't affect tests)
+        coEvery { generateSuggestionsUseCase(any()) } returns Result.success(Unit)
+
+        createJourneyUseCase = CreateJourneyUseCase(
+            journeyRepository = journeyRepository,
+            generateSuggestionsUseCase = generateSuggestionsUseCase,
+            coroutineScope = testScope
+        )
     }
 
     @Test
