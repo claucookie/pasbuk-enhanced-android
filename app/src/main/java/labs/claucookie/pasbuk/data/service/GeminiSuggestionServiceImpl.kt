@@ -26,13 +26,13 @@ import javax.inject.Singleton
 class GeminiSuggestionServiceImpl @Inject constructor() : GeminiSuggestionService {
 
     private val model = GenerativeModel(
-        modelName = "gemini-1.5-flash",  // Fast model for quick suggestions
+        modelName = "gemini-2.5-flash",  // Fast stable model for quick suggestions
         apiKey = BuildConfig.GEMINI_API_KEY,
         generationConfig = generationConfig {
             temperature = 0.7f
             topK = 40
             topP = 0.95f
-            maxOutputTokens = 1024
+            maxOutputTokens = 2048  // Increased to accommodate JSON response with multiple suggestions
         }
     )
 
