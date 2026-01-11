@@ -32,7 +32,7 @@ class GeminiSuggestionServiceImpl @Inject constructor() : GeminiSuggestionServic
             temperature = 0.7f
             topK = 40
             topP = 0.95f
-            maxOutputTokens = 2048  // Increased to accommodate JSON response with multiple suggestions
+            maxOutputTokens = 4048  // Increased to accommodate JSON response with multiple suggestions
         }
     )
 
