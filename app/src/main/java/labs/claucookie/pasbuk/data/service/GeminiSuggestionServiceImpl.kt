@@ -1,6 +1,5 @@
 package labs.claucookie.pasbuk.data.service
 
-
 import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.generationConfig
@@ -49,7 +48,6 @@ class GeminiSuggestionServiceImpl @Inject constructor() : GeminiSuggestionServic
                 }
 
                 val prompt = buildPrompt(journey)
-
                 Log.d(TAG, "Prompt built, sending to Gemini API...")
                 Log.v(TAG, "Prompt: $prompt")
 
@@ -209,6 +207,7 @@ class GeminiSuggestionServiceImpl @Inject constructor() : GeminiSuggestionServic
             }
         } ?: "No location"
     }
+
     companion object {
         private const val TAG = "GeminiSuggestionService"
     }

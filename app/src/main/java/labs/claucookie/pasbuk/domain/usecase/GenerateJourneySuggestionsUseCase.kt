@@ -29,31 +29,44 @@ class GenerateJourneySuggestionsUseCase @Inject constructor(
     suspend operator fun invoke(journeyId: Long): Result<Unit> {
         return try {
             Log.d(TAG, "Starting suggestion generation for journey ID: $journeyId")
+
             // Fetch journey
             val journey = journeyRepository.getJourneyById(journeyId)
                 ?: return Result.failure(IllegalArgumentException("Journey not found"))
 
+            Log.d(TAG, "Journey fetched: ${journey.name} with ${journey.passes.size} passes")
+
             // Skip if journey has fewer than 2 passes
             if (journey.passes.size < 2) {
+                Log.d(TAG, "Skipping suggestion generation - journey has < 2 passes")
                 return Result.success(Unit)
             }
 
             // Generate suggestions via Gemini
+            Log.d(TAG, "Calling Gemini API for suggestions...")
             val suggestionsResult = geminiService.generateSuggestions(journey)
 
             suggestionsResult.fold(
                 onSuccess = { suggestions ->
+                    Log.d(TAG, "Generated ${suggestions.size} suggestions")
                     // Update journey with suggestions
                     journeyRepository.updateSuggestions(journeyId, suggestions)
+                    Log.d(TAG, "Suggestions saved to database")
                     Result.success(Unit)
                 },
                 onFailure = { error ->
+                    Log.e(TAG, "Failed to generate suggestions", error)
                     // Return failure but don't crash the app
                     Result.failure(error)
                 }
             )
         } catch (e: Exception) {
+            Log.e(TAG, "Exception during suggestion generation", e)
             Result.failure(e)
         }
+    }
+
+    companion object {
+        private const val TAG = "GenerateJourneySuggestions"
     }
 }
