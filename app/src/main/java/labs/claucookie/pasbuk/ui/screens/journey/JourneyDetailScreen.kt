@@ -192,9 +192,7 @@ fun JourneyDetailScreen(
                                     passes = journey.passes,
                                     suggestions = journey.activeSuggestions,
                                     onPassClick = onPassClick,
-                                    onSuggestionDismiss = { suggestionId ->
-                                        viewModel.dismissSuggestion(suggestionId)
-                                    }
+                                    onSuggestionDismiss = onSuggestionDismiss
                                 )
                             }
                         }

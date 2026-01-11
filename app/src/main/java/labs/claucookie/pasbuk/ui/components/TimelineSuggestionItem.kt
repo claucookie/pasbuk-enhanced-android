@@ -186,19 +186,6 @@ private fun SuggestionCard(
                         tint = Color(0xFFB0B8C3),
                         modifier = Modifier.size(20.dp)
                     )
-
-                    // Dismiss button
-                    IconButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Dismiss suggestion",
-                            tint = Color(0xFFB0B8C3),
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
